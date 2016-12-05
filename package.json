@@ -1,0 +1,22 @@
+{
+  "name": "algolia-popular-queries",
+  "version": "0.0.0",
+  "author": "Algolia <support@algolia.com>",
+  "license": "MIT",
+  "description": "Private repository for scripts and tools used with Algolia Popular Queries",
+  "homepage": "https://github.com/algolia/algolia-popular-queries#readme",
+  "private": true,
+  "scripts": {
+    "release": "./scripts/release.sh",
+    "relase-git": "./scripts/release-git.sh",
+    "release-connector": "./scripts/release-connector.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/algolia/algolia-popular-queries.git"
+  },
+  "devDependencies": {
+    "conventional-changelog": "^1.1.0",
+    "json": "^9.0.3"
+  }
+}
