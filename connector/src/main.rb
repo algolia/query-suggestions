@@ -36,7 +36,8 @@ def main
       removeWordsIfNoResults: 'none',
       attributesToRetrieve: [],
       attributesToSnippet: [],
-      attributesToHighlight: '*'
+      attributesToHighlight: '*',
+      analytics: false
     )
     next if rep['nbHits'] < MIN_HITS
     res.push(
