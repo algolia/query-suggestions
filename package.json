@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "release": "./scripts/release.sh",
-    "relase:git": "./scripts/release-git.sh",
+    "release:git": "./scripts/release-git.sh",
     "release:connector": "./scripts/release-connector.sh"
   },
   "repository": {
