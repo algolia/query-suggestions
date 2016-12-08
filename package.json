@@ -1,6 +1,6 @@
 {
   "name": "algolia-popular-queries",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Algolia <support@algolia.com>",
   "license": "MIT",
   "description": "Private repository for scripts and tools used with Algolia Popular Queries",
