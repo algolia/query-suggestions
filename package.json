@@ -8,8 +8,8 @@
   "private": true,
   "scripts": {
     "release": "./scripts/release.sh",
-    "relase-git": "./scripts/release-git.sh",
-    "release-connector": "./scripts/release-connector.sh"
+    "relase:git": "./scripts/release-git.sh",
+    "release:connector": "./scripts/release-connector.sh"
   },
   "repository": {
     "type": "git",
