@@ -4,7 +4,7 @@ require_relative './config.rb'
 
 class PopularIndex
   DEFAULT_SETTINGS = {
-    attributesToIndex: %w(query),
+    attributesToIndex: %w(objectID),
     customRanking: %w(desc(popularity)),
     numericAttributesToIndex: []
   }.freeze
@@ -30,13 +30,13 @@ class PopularIndex
   def push records
     tmp_index.set_settings! settings
     records.each_slice(1000) do |recs|
-      tmp_index.add_objects! recs
+      tmp_index.partial_update_objects! recs
     end
     move_tmp
   end
 
   def name
-    "#{CONFIG['index']}_popular_queries"
+    "#{CONFIG['index_prefix']}popular_searches"
   end
 
   def index

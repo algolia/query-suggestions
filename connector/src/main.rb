@@ -10,8 +10,12 @@ MIN_LETTERS = 4
 MIN_HITS = 5
 MIN_SEARCHED = 5
 
-def source_index
-  @source_index ||= SourceIndex.new.index
+def each_index &_block
+  raise ArgumentError, 'Missing block' unless block_given?
+  CONFIG['indices'].split(',').map(&:strip).each do |idx|
+    idx = SourceIndex.new(idx)
+    yield idx
+  end
 end
 
 def target_index
@@ -20,30 +24,26 @@ end
 
 def main
   res = []
-  popular = Analytics.popular_searches(
-    CONFIG['index'],
-    size: 10_000,
-    start_at: (Time.now - 90.days).to_i
-  )
-  popular.each_with_index do |p, i|
-    puts "Query #{i + 1} / #{popular.size}"
-    next if p['count'] < MIN_SEARCHED
-    next if p['query'].length < MIN_LETTERS
-    rep = source_index.search(
-      p['query'],
-      typoTolerance: false,
-      queryType: 'prefixNone',
-      removeWordsIfNoResults: 'none',
-      attributesToRetrieve: [],
-      attributesToSnippet: [],
-      attributesToHighlight: '*',
-      analytics: false
+  each_index do |idx|
+    popular = Analytics.popular_searches(
+      idx.name,
+      size: 10_000,
+      start_at: (Time.now - 90.days).to_i
     )
-    next if rep['nbHits'] < MIN_HITS
-    res.push(
-      query: p['query'],
-      popularity: p['count']
-    )
+    popular.each_with_index do |p, i|
+      puts "[#{idx.name}] Query #{i + 1} / #{popular.size}: \"#{p['query']}\""
+      next if p['count'] < MIN_SEARCHED
+      next if p['query'].length < MIN_LETTERS
+      rep = idx.search_exact p['query']
+      next if rep['nbHits'] < MIN_HITS
+      res.push(
+        objectID: p['query'],
+        popularity: {
+          value: p['count'],
+          _operation: 'Increment'
+        }
+      )
+    end
   end
   target_index.push res
 end

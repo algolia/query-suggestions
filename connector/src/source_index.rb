@@ -10,18 +10,26 @@ class SourceIndex
     )
   end
 
-  def initialize
+  attr_reader :name
+
+  def initialize name
+    @name = name
   end
 
-  def search *args
-    index.search(*args)
-  end
-
-  def name
-    CONFIG['index']
+  def search_exact query
+    index.search(
+      query,
+      typoTolerance: false,
+      queryType: 'prefixNone',
+      removeWordsIfNoResults: 'none',
+      attributesToRetrieve: [],
+      attributesToSnippet: [],
+      attributesToHighlight: '*',
+      analytics: false
+    )
   end
 
   def index
-    self.class.client.init_index name
+    @index ||= self.class.client.init_index name
   end
 end
