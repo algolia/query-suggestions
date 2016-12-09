@@ -1,3 +1,13 @@
+<a name="0.0.6"></a>
+## [0.0.6](https://github.com/algolia/algolia-popular-queries/compare/v0.0.5...v0.0.6) (2016-12-09)
+
+
+### Bug Fixes
+
+* **config:** type cast numbers ([96e4647](https://github.com/algolia/algolia-popular-queries/commit/96e4647))
+
+
+
 <a name="0.0.5"></a>
 ## [0.0.5](https://github.com/algolia/algolia-popular-queries/compare/v0.0.4...v0.0.5) (2016-12-09)
 
