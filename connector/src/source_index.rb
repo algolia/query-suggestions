@@ -5,8 +5,8 @@ require_relative './config.rb'
 class SourceIndex
   def self.client
     @client ||= Algolia::Client.new(
-      application_id: CONFIG['algolia_app_id'],
-      api_key: CONFIG['algolia_api_key']
+      application_id: CONFIG['app_id'],
+      api_key: CONFIG['api_key']
     )
   end
 

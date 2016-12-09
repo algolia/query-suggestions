@@ -17,11 +17,11 @@ class PopularIndex
   end
 
   def self.client_app_id
-    CONFIG['algolia_target_app_id'] || CONFIG['algolia_app_id']
+    CONFIG['target_app_id'] || CONFIG['app_id']
   end
 
   def self.client_api_key
-    CONFIG['algolia_target_api_key'] || CONFIG['algolia_api_key']
+    CONFIG['target_api_key'] || CONFIG['api_key']
   end
 
   def initialize
