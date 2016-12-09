@@ -6,10 +6,6 @@ require_relative './analytics.rb'
 require_relative './popular_index.rb'
 require_relative './source_index.rb'
 
-MIN_LETTERS = 4
-MIN_HITS = 5
-MIN_SEARCHED = 5
-
 def each_index &_block
   raise ArgumentError, 'Missing block' unless block_given?
   CONFIG['indices'].split(',').map(&:strip).each do |idx|
@@ -32,10 +28,9 @@ def main
     )
     popular.each_with_index do |p, i|
       puts "[#{idx.name}] Query #{i + 1} / #{popular.size}: \"#{p['query']}\""
-      next if p['count'] < MIN_SEARCHED
-      next if p['query'].length < MIN_LETTERS
+      next if p['query'].length < CONFIG['min_letters']
       rep = idx.search_exact p['query']
-      next if rep['nbHits'] < MIN_HITS
+      next if rep['nbHits'] < CONFIG['min_hits']
       res.push(
         objectID: p['query'],
         popularity: {
