@@ -1,3 +1,13 @@
+<a name="0.0.4"></a>
+## [0.0.4](https://github.com/algolia/algolia-popular-queries/compare/v0.0.3...v0.0.4) (2016-12-09)
+
+
+### Features
+
+* **source:** allow to provide source_{app_id,api_key} ([5151d7c](https://github.com/algolia/algolia-popular-queries/commit/5151d7c))
+
+
+
 <a name="0.0.3"></a>
 ## [0.0.3](https://github.com/algolia/algolia-popular-queries/compare/v0.0.2...v0.0.3) (2016-12-09)
 
