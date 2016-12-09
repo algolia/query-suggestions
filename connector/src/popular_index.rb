@@ -55,7 +55,6 @@ class PopularIndex
     index.get_settings
   rescue Algolia::AlgoliaProtocolError => e
     raise if e.code / 100 != 4
-    puts index.client.application_id
     index.set_settings! DEFAULT_SETTINGS
     DEFAULT_SETTINGS
   end
