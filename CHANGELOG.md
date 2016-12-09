@@ -1,3 +1,13 @@
+<a name="0.0.5"></a>
+## [0.0.5](https://github.com/algolia/algolia-popular-queries/compare/v0.0.4...v0.0.5) (2016-12-09)
+
+
+### Features
+
+* **config:** retrieve constants from the config ([9da172a](https://github.com/algolia/algolia-popular-queries/commit/9da172a))
+
+
+
 <a name="0.0.4"></a>
 ## [0.0.4](https://github.com/algolia/algolia-popular-queries/compare/v0.0.3...v0.0.4) (2016-12-09)
 
