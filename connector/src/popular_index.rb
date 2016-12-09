@@ -11,17 +11,9 @@ class PopularIndex
 
   def self.client
     @client ||= Algolia::Client.new(
-      application_id: client_app_id,
-      api_key: client_api_key
+      application_id: CONFIG['target_app_id'] || CONFIG['app_id'],
+      api_key: CONFIG['target_api_key'] || CONFIG['api_key']
     )
-  end
-
-  def self.client_app_id
-    CONFIG['target_app_id'] || CONFIG['app_id']
-  end
-
-  def self.client_api_key
-    CONFIG['target_api_key'] || CONFIG['api_key']
   end
 
   def initialize
