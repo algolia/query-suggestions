@@ -28,6 +28,7 @@ def main
     )
     popular.each_with_index do |p, i|
       puts "[#{idx.name}] Query #{i + 1} / #{popular.size}: \"#{p['query']}\""
+      next if p['query'].match(/[^\p{L} ]/)
       next if p['query'].length < CONFIG['min_letters']
       rep = idx.search_exact p['query']
       next if rep['nbHits'] < CONFIG['min_hits']
