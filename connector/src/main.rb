@@ -27,13 +27,14 @@ def main
       start_at: (Time.now - 90.days).to_i
     )
     popular.each_with_index do |p, i|
-      puts "[#{idx.name}] Query #{i + 1} / #{popular.size}: \"#{p['query']}\""
-      next if p['query'].match(/[^\p{L} ]/)
-      next if p['query'].length < CONFIG['min_letters']
-      rep = idx.search_exact p['query']
+      q = p['query'].strip.split(/\s+/).join(' ')
+      puts "[#{idx.name}] Query #{i + 1} / #{popular.size}: \"#{q}\""
+      next if q =~ /[^\p{L} ]/
+      next if q.length < CONFIG['min_letters']
+      rep = idx.search_exact q
       next if rep['nbHits'] < CONFIG['min_hits']
       res.push(
-        objectID: p['query'],
+        objectID: q,
         popularity: {
           value: p['count'],
           _operation: 'Increment'
