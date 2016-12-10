@@ -1,3 +1,14 @@
+<a name="0.0.7"></a>
+## [0.0.7](https://github.com/algolia/algolia-popular-queries/compare/v0.0.6...v0.0.7) (2016-12-10)
+
+
+### Bug Fixes
+
+* **main:** exclude queries with special characters ([6643fc0](https://github.com/algolia/algolia-popular-queries/commit/6643fc0))
+* **main:** use single spaces between words ([f1ebeb6](https://github.com/algolia/algolia-popular-queries/commit/f1ebeb6))
+
+
+
 <a name="0.0.6"></a>
 ## [0.0.6](https://github.com/algolia/algolia-popular-queries/compare/v0.0.5...v0.0.6) (2016-12-09)
 
