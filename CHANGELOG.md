@@ -1,3 +1,8 @@
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/algolia/algolia-popular-queries/compare/v0.0.8...v1.0.0) (2016-12-12)
+
+
+
 <a name="0.0.8"></a>
 ## [0.0.8](https://github.com/algolia/algolia-popular-queries/compare/v0.0.7...v0.0.8) (2016-12-12)
 
