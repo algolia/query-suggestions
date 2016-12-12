@@ -24,7 +24,8 @@ def main
     popular = Analytics.popular_searches(
       idx.name,
       size: 10_000,
-      start_at: (Time.now - 90.days).to_i
+      start_at: (Time.now - 90.days).to_i,
+      tags: CONFIG['analytics_tags']
     )
     popular.each_with_index do |p, i|
       q = p['query'].strip.split(/\s+/).join(' ')

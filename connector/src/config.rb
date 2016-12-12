@@ -7,3 +7,4 @@ CONFIG = {
 }.merge(JSON.parse(ENV['CONFIG']))
 CONFIG['min_hits'] = (CONFIG['min_hits'] || 5).to_i
 CONFIG['min_letters'] = (CONFIG['min_letters'] || 3).to_i
+CONFIG['analytics_tags'] ||= ''
