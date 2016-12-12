@@ -1,3 +1,13 @@
+<a name="0.0.8"></a>
+## [0.0.8](https://github.com/algolia/algolia-popular-queries/compare/v0.0.7...v0.0.8) (2016-12-12)
+
+
+### Features
+
+* **tags:** allow using analytics tags ([1251877](https://github.com/algolia/algolia-popular-queries/commit/1251877))
+
+
+
 <a name="0.0.7"></a>
 ## [0.0.7](https://github.com/algolia/algolia-popular-queries/compare/v0.0.6...v0.0.7) (2016-12-10)
 
