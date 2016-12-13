@@ -2,6 +2,69 @@
 <html>
   <head>
     <title>Algolia Search for Popular Searches test</title>
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+    <style>
+* {
+  font-family: Open Sans, sans-serif;
+}
+
+.algolia-autocomplete {
+  width: 100%;
+}
+
+#search-input {
+  width: 100%;
+  padding: 8px 16px;
+}
+
+.aa-dropdown-menu {
+  position: relative;
+  width: 100%;
+  margin-top: 16px;
+  background: #ffffff;
+  border: 2px solid #e8e8e8;
+}
+
+.aa-dropdown-menu:after, .aa-dropdown-menu:before {
+  bottom: 100%;
+  right: 20px;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.aa-dropdown-menu:after {
+  border-color: rgba(255, 255, 255, 0);
+  border-bottom-color: #ffffff;
+  border-width: 12px;
+  margin-left: -12px;
+  right: 22px;
+}
+
+.aa-dropdown-menu:before {
+  border-color: rgba(232, 232, 232, 0);
+  border-bottom-color: #e8e8e8;
+  border-width: 14px;
+  margin-left: -14px;
+}
+
+.aa-suggestion {
+  padding: 4px 8px;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.aa-suggestion:last-child {
+  border-bottom: none;
+}
+
+.highlight {
+  font-weight: bold;
+}
+    </style>
   </head>
   <body>
     <input id="search-input" type="text" />
@@ -11,9 +74,9 @@
     <script>
       var client = algoliasearch('OMDED4ZQES', '24c5f81bb301609f7dced52863634ec6')
       var index = client.initIndex('hackernews_popular_searches');
-      autocomplete('#search-input', { hint: false }, [
+      autocomplete('#search-input', { debug: true, hint: false }, [
         {
-          source: autocomplete.sources.hits(index, { hitsPerPage: 5 }),
+          source: autocomplete.sources.hits(index, { hitsPerPage: 8, highlightPreTag: '<span class="highlight">', highlightPostTag: '</span>' }),
           displayKey: 'query',
           templates: {
             suggestion: function(suggestion) {
