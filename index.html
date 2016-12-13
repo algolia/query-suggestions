@@ -5,8 +5,13 @@
 
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans" />
     <style>
-* {
+*, *:after, *:before {
   font-family: Open Sans, sans-serif;
+  box-sizing: border-box;
+}
+
+h1 {
+  text-align: center;
 }
 
 .algolia-autocomplete {
@@ -67,7 +72,8 @@
     </style>
   </head>
   <body>
-    <input id="search-input" type="text" />
+    <h1>Search in HackerNews popular searches</h1>
+    <input id="search-input" type="text" autocomplete="off" placeholder="Search for HackerNews topics" autofocus="autofocus" />
 
     <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
     <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
@@ -85,7 +91,7 @@
           }
         }
       ]).on('autocomplete:selected', function(event, suggestion, dataset) {
-        console.log(suggestion, dataset);
+        window.location.href = 'https://hn.algolia.com/?q=' + encodeURIComponent(suggestion.query);
       });
     </script>
   </body>
