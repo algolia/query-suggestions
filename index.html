@@ -58,16 +58,20 @@ h1 {
 }
 
 .aa-suggestion {
-  padding: 4px 8px;
+  padding: 8px 8px;
   border-bottom: 1px solid #ebebeb;
 }
 
-.aa-suggestion:last-child {
-  border-bottom: none;
+.aa-suggestion.aa-cursor {
+  background: #f8f8f8;
 }
 
 .highlight {
   font-weight: bold;
+}
+
+.aa-footer {
+  font-size: 0.95em;
 }
     </style>
   </head>
@@ -80,6 +84,7 @@ h1 {
     <script>
       var client = algoliasearch('OMDED4ZQES', '24c5f81bb301609f7dced52863634ec6')
       var index = client.initIndex('hackernews_popular_searches');
+      var query = null;
       autocomplete('#search-input', { debug: true, hint: false }, [
         {
           source: autocomplete.sources.hits(index, { hitsPerPage: 8, highlightPreTag: '<span class="highlight">', highlightPostTag: '</span>' }),
@@ -87,12 +92,22 @@ h1 {
           templates: {
             suggestion: function(suggestion) {
               return suggestion._highlightResult.query.value;
+            },
+            footer: function(opts) {
+              query = opts.query;
+              return '<div class="aa-suggestion aa-footer">Search for results matching "' + query + '"</div>'
             }
           }
         }
       ]).on('autocomplete:selected', function(event, suggestion, dataset) {
+        if (suggestion === undefined) {
+          suggestion = {
+            query: query
+          };
+        }
         window.location.href = 'https://hn.algolia.com/?q=' + encodeURIComponent(suggestion.query);
       });
+      document.querySelector('#search-input').focus();
     </script>
   </body>
 </html>
