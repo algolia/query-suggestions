@@ -1,3 +1,13 @@
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/algolia/algolia-popular-queries/compare/v1.0.0...v1.0.1) (2016-12-13)
+
+
+### Bug Fixes
+
+* **data:** index query (duplicate of objectID) ([d61f4ab](https://github.com/algolia/algolia-popular-queries/commit/d61f4ab))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/algolia/algolia-popular-queries/compare/v0.0.8...v1.0.0) (2016-12-12)
 
