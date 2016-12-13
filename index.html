@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Algolia Search for Popular Searches test</title>
+  </head>
+  <body>
+    <input id="search-input" type="text" />
+
+    <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+    <script>
+      var client = algoliasearch('OMDED4ZQES', '24c5f81bb301609f7dced52863634ec6')
+      var index = client.initIndex('hackernews_popular_searches');
+      autocomplete('#search-input', { hint: false }, [
+        {
+          source: autocomplete.sources.hits(index, { hitsPerPage: 5 }),
+          displayKey: 'query',
+          templates: {
+            suggestion: function(suggestion) {
+              return suggestion._highlightResult.query.value;
+            }
+          }
+        }
+      ]).on('autocomplete:selected', function(event, suggestion, dataset) {
+        console.log(suggestion, dataset);
+      });
+    </script>
+  </body>
+</html>
