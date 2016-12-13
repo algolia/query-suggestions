@@ -4,8 +4,9 @@ require_relative './config.rb'
 
 class PopularIndex
   DEFAULT_SETTINGS = {
-    attributesToIndex: %w(objectID),
+    attributesToIndex: %w(query),
     customRanking: %w(desc(popularity)),
+    attributesToHighlight: %w(query),
     numericAttributesToIndex: []
   }.freeze
 

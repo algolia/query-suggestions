@@ -36,6 +36,7 @@ def main
       next if rep['nbHits'] < CONFIG['min_hits']
       res.push(
         objectID: q,
+        query: q,
         popularity: {
           value: p['count'],
           _operation: 'Increment'
