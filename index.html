@@ -18,7 +18,7 @@ h1 {
   width: 100%;
 }
 
-#search-input {
+#search_input {
   width: 100%;
   padding: 8px 16px;
 }
@@ -60,6 +60,7 @@ h1 {
 .aa-suggestion {
   padding: 8px 8px;
   border-bottom: 1px solid #ebebeb;
+  cursor: pointer;
 }
 
 .aa-suggestion.aa-cursor {
@@ -76,38 +77,73 @@ h1 {
     </style>
   </head>
   <body>
-    <h1>Search in HackerNews popular searches</h1>
-    <input id="search-input" type="text" autocomplete="off" placeholder="Search for HackerNews topics" autofocus="autofocus" />
+    <select id="index_selector">
+      <option value="hackernews" selected>HackerNews</option>
+      <option value="instant_search">Instant Search demo</option>
+    </select>
+
+    <h1 id="title">Search in HackerNews popular searches</h1>
+    <input id="search_input" type="text" autocomplete="off" placeholder="Search for HackerNews topics" autofocus="autofocus" />
 
     <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
     <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
     <script>
+      var AVAILABLE = {
+        hackernews: {
+          title: 'HackerNews',
+          placeholder: 'Search for HackerNews topics',
+          url: 'https://hn.algolia.com/?q='
+        },
+        instant_search: {
+          title: 'Instant Search demo',
+          placeholder: 'Search for products suggestions',
+          url: 'https://demos.algolia.com/instant-search-demo/?q='
+        }
+      };
+
+      var $index_selector = document.getElementById('index_selector');
+      var $title = document.getElementById('title');
+      var $search_input = document.getElementById('search_input');
+
+      var index = $index_selector.value;
       var client = algoliasearch('OMDED4ZQES', '24c5f81bb301609f7dced52863634ec6')
-      var index = client.initIndex('hackernews_popular_searches');
-      var query = null;
-      autocomplete('#search-input', { debug: true, hint: false }, [
-        {
-          source: autocomplete.sources.hits(index, { hitsPerPage: 8, highlightPreTag: '<span class="highlight">', highlightPostTag: '</span>' }),
-          displayKey: 'query',
-          templates: {
-            suggestion: function(suggestion) {
-              return suggestion._highlightResult.query.value;
-            },
-            footer: function(opts) {
-              query = opts.query;
-              return '<div class="aa-suggestion aa-footer">Search for results matching "' + query + '"</div>'
+      var aa = null;
+
+      function createAutocomplete () {
+        var query = null;
+        $title.innerText = AVAILABLE[index].title + ' popular searches';
+        $search_input.placeholder = AVAILABLE[index].placeholder;
+        aa = autocomplete('#search_input', { debug: true, hint: false }, [
+          {
+            source: autocomplete.sources.hits(client.initIndex(index + '_popular_searches'), { hitsPerPage: 8, highlightPreTag: '<span class="highlight">', highlightPostTag: '</span>' }),
+            displayKey: 'query',
+            templates: {
+              suggestion: function(suggestion) {
+                return suggestion._highlightResult.query.value;
+              },
+              footer: function(opts) {
+                query = opts.query;
+                return '<div class="aa-suggestion aa-footer">Search for results matching "' + query + '"</div>'
+              }
             }
           }
-        }
-      ]).on('autocomplete:selected', function(event, suggestion, dataset) {
-        if (suggestion === undefined) {
-          suggestion = {
-            query: query
-          };
-        }
-        window.location.href = 'https://hn.algolia.com/?q=' + encodeURIComponent(suggestion.query);
+        ]).on('autocomplete:selected', function(event, suggestion, dataset) {
+          if (suggestion === undefined) {
+            suggestion = {
+              query: query
+            };
+          }
+          window.location.href = AVAILABLE[index].url + encodeURIComponent(suggestion.query);
+        });
+        $search_input.focus();
+      }
+      createAutocomplete();
+
+      $index_selector.addEventListener('change', function () {
+        index = $index_selector.value;
+        aa.autocomplete.destroy();
+        createAutocomplete();
       });
-      document.querySelector('#search-input').focus();
     </script>
   </body>
 </html>
