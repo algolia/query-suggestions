@@ -1,13 +1,25 @@
 require 'algoliasearch'
+require 'active_support'
+require 'active_support/core_ext/object/blank'
 
 require_relative './config.rb'
 
 class SourceIndex
   def self.client
     @client ||= Algolia::Client.new(
-      application_id: CONFIG['source_app_id'] || CONFIG['app_id'],
-      api_key: CONFIG['source_api_key'] || CONFIG['api_key']
+      application_id: application_id,
+      api_key: api_key
     )
+  end
+
+  def self.application_id
+    return CONFIG['source_app_id'] unless CONFIG['source_app_id'].blank?
+    CONFIG['app_id']
+  end
+
+  def self.api_key
+    return CONFIG['source_api_key'] unless CONFIG['source_api_key'].blank?
+    CONFIG['api_key']
   end
 
   attr_reader :name
