@@ -32,9 +32,10 @@ class SourceIndex
       typoTolerance: false,
       queryType: 'prefixNone',
       removeWordsIfNoResults: 'none',
+      hitsPerPage: 0,
       attributesToRetrieve: [],
       attributesToSnippet: [],
-      attributesToHighlight: '*',
+      attributesToHighlight: [],
       analytics: false
     )
   end
