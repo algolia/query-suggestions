@@ -26,7 +26,8 @@ def main
     popular = Analytics.popular_searches(
       idx.name,
       size: 10_000,
-      start_at: (Time.now - 90.days).to_i,
+      startAt: (Time.now - 90.days).to_i,
+      endAt: Time.now.to_i,
       tags: CONFIG['analytics_tags']
     )
     popular.each_with_index do |p, i|
