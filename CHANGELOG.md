@@ -1,3 +1,13 @@
+<a name="1.0.3"></a>
+## [1.0.3](https://github.com/algolia/algolia-popular-queries/compare/v1.0.2...v1.0.3) (2016-12-14)
+
+
+### Bug Fixes
+
+* **config:** handle default correctly ([242046e](https://github.com/algolia/algolia-popular-queries/commit/242046e))
+
+
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/algolia/algolia-popular-queries/compare/v1.0.1...v1.0.2) (2016-12-14)
 
