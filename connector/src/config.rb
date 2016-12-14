@@ -5,6 +5,7 @@ CONFIG = {
   'api_key' => ENV['API_KEY'],
   'index_prefix' => ENV['INDEX_PREFIX']
 }.merge(JSON.parse(ENV['CONFIG']))
+
 CONFIG['min_hits'] = 5 if CONFIG['min_hits'].blank?
 CONFIG['min_hits'] = CONFIG['min_hits'].to_i
 

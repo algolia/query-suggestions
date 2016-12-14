@@ -26,6 +26,10 @@ class SourceIndex
     @name = name
   end
 
+  def search *args
+    index.search(*args)
+  end
+
   def search_exact query
     index.search(
       query,
