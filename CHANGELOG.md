@@ -1,3 +1,18 @@
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/algolia/algolia-popular-queries/compare/v1.0.3...v1.1.0) (2016-12-14)
+
+
+### Bug Fixes
+
+* **analytics:** startAt not start_at ([45b1825](https://github.com/algolia/algolia-popular-queries/commit/45b1825))
+
+
+### Features
+
+* **generation:** add query generation capabilities ([13282b5](https://github.com/algolia/algolia-popular-queries/commit/13282b5))
+
+
+
 <a name="1.0.3"></a>
 ## [1.0.3](https://github.com/algolia/algolia-popular-queries/compare/v1.0.2...v1.0.3) (2016-12-14)
 
