@@ -12,7 +12,7 @@ require_relative './search_string.rb'
 
 def each_index &_block
   raise ArgumentError, 'Missing block' unless block_given?
-  CONFIG['indices'].split(',').map(&:strip).each do |idx|
+  CONFIG['indices'].each do |idx|
     idx = SourceIndex.new(idx)
     yield idx
   end
