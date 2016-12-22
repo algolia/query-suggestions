@@ -1,3 +1,20 @@
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/algolia/algolia-popular-queries/compare/v1.1.0...v1.2.0) (2016-12-22)
+
+
+### Features
+
+* **CONFIG:** indices now accepts an array ([75c447d](https://github.com/algolia/algolia-popular-queries/commit/75c447d))
+
+
+### BREAKING CHANGES
+
+* CONFIG: The old comma separated string list doesn't work anymore for the indices attribute.
+  Since we're accepting JSON as an input, it indeed seems weird that we would rely on this.
+  Just a new minor because no-one except us seem to use this connector right now.
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/algolia/algolia-popular-queries/compare/v1.0.3...v1.1.0) (2016-12-14)
 
