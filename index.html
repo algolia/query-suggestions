@@ -132,10 +132,14 @@ h1 {
           keys: {
             main: 'title',
             secondary: 'story_text',
-            img: ''
+            img: '',
+            url: 'url'
           },
           parameters: {
             tagFilters: ['story']
+          },
+          buildUrl: function (h) {
+            return 'https://news.ycombinator.com/item?id=' + h.objectID;
           }
         },
         instant_search: {
@@ -146,7 +150,8 @@ h1 {
           keys: {
             main: 'name',
             secondary: 'description',
-            img: 'image'
+            img: 'image',
+            url: 'url'
           },
           parameters: {}
         }
@@ -190,19 +195,24 @@ h1 {
           recentSearches.unshift(q);
         }
 
-        function buildEntry (suggestionType, content) {
+        function buildEntry (suggestionType, query, content) {
           var icon = '';
           if (suggestionType === 'recent') icon = 'clock-o';
           if (suggestionType === 'popular') icon = 'search';
-          return '' +
-            '<span class="suggestion-left">' +
-            '  <i class="fa fa-' + icon + '"></i>' +
-            '</span>' +
-            '<span class="suggestion-right">' +
-            '  <span class="suggested-query suggested-' + suggestionType + '">' +
-            '    ' + content +
-            '  </span>' +
-            '</span>';
+          return {
+            url: AVAILABLE[index].url + encodeURIComponent(query),
+            html: '' +
+              '<span class="suggestion">' +
+              '  <span class="suggestion-left">' +
+              '    <i class="fa fa-' + icon + '"></i>' +
+              '  </span>' +
+              '  <span class="suggestion-right">' +
+              '    <span class="suggested-query suggested-' + suggestionType + '">' +
+              '      ' + content +
+              '    </span>' +
+              '  </span>' +
+              '</span>'
+          };
         }
 
         $title.innerText = AVAILABLE[index].title + ' popular searches';
@@ -223,7 +233,7 @@ h1 {
                 return content.hits.filter(function (h) {
                   return recents.indexOf(h.query) === -1;
                 }).map(function (h) {
-                  return buildEntry('popular', h._highlightResult.query.value);
+                  return buildEntry('popular', h.query, h._highlightResult.query.value);
                 }).slice(0, QUERIES_AMOUNT - recents.length);
               }).catch(function (error) {
                 console.error(error);
@@ -233,24 +243,26 @@ h1 {
                 hitsPerPage: 20,
                 highlightPreTag: '<span class="highlight">',
                 highlightPostTag: '</span>',
-                attributesToRetrieve: [dataKeys.img],
+                attributesToRetrieve: [dataKeys.img, dataKeys.url],
                 attributesToHighlight: [dataKeys.main],
                 attributesToSnippet: [dataKeys.secondary + ':20']
               })).then(function (content) {
                 return content.hits.map(function (h) {
-                  return '' +
-                    '<span class="suggestion-left">' +
-                    '</span>' +
-                    '<span class="suggestion-right">' +
-                    '  ' + ((!h._highlightResult || !h._highlightResult[dataKeys.main]) ? ('No ' + dataKeys.main) : h._highlightResult[dataKeys.main].value) +
-                    '</span>'
-                    ;
+                  return {
+                    url: h[dataKeys.url] || AVAILABLE[index].buildUrl(h),
+                    html: '' +
+                      '<span class="suggestion-left">' +
+                      '</span>' +
+                      '<span class="suggestion-right">' +
+                      '  ' + ((!h._highlightResult || !h._highlightResult[dataKeys.main]) ? ('No ' + dataKeys.main) : h._highlightResult[dataKeys.main].value) +
+                      '</span>'
+                  };
                 });
               });
 
               res = res.concat(recents.map(function (search) {
                 var highlighted = search.replace(new RegExp(escapeRegExp(q), 'g'), '<span class="highlight">$&</span>');
-                return buildEntry('recent', highlighted);
+                return buildEntry('recent', search, highlighted);
               }));
               Promise.all([popularPromise, dataPromise]).then(function (data) {
                 data.forEach(function (arr) {
@@ -262,7 +274,7 @@ h1 {
             displayKey: 'query',
             templates: {
               suggestion: function(suggestion) {
-                return suggestion;
+                return suggestion.html;
               },
               footer: function(opts) {
                 query = opts.query;
@@ -272,11 +284,9 @@ h1 {
           }
         ]).on('autocomplete:selected', function(event, suggestion, dataset) {
           if (suggestion === undefined) {
-            suggestion = {
-              query: query
-            };
+            window.location.href = AVAILABLE[index].url + query;
           }
-          window.location.href = AVAILABLE[index].url + encodeURIComponent(suggestion.query);
+          window.location.href = suggestion.url;
         });
         $search_input.focus();
         $search_input.addEventListener('blur', function () {
