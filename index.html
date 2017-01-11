@@ -4,10 +4,15 @@
     <title>Algolia Search for Popular Searches test</title>
 
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <style>
 *, *:after, *:before {
   font-family: Open Sans, sans-serif;
   box-sizing: border-box;
+}
+
+*:before {
+  font-family: FontAwesome, Open Sans, sans-serif;
 }
 
 h1 {
@@ -88,16 +93,62 @@ h1 {
     <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
     <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
     <script>
+      function escapeHtml (text) {
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function escapeRegExp (str) {
+        return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+      }
+
+      var QUERIES_AMOUNT = 8;
+
+      var RECENT_SEARCHES = {
+        hackernews: [
+          'apple',
+          'iphone 7',
+          'facebook',
+          'amazon'
+        ],
+        instant_search: [
+          'iphone 7',
+          'iphone 6s',
+          'iphone 6',
+          'iphone'
+        ]
+      };
+
       var AVAILABLE = {
         hackernews: {
           title: 'HackerNews',
           placeholder: 'Search for HackerNews topics',
-          url: 'https://hn.algolia.com/?q='
+          url: 'https://hn.algolia.com/?q=',
+          index: algoliasearch('UJ5WYC0L7X', '08240194d5ef567a9f14e0f066bace0c').initIndex('Item_production'),
+          keys: {
+            main: 'title',
+            secondary: 'story_text',
+            img: ''
+          },
+          parameters: {
+            tagFilters: ['story']
+          }
         },
         instant_search: {
           title: 'Instant Search demo',
           placeholder: 'Search for products suggestions',
-          url: 'https://demos.algolia.com/instant-search-demo/?q='
+          url: 'https://demos.algolia.com/instant-search-demo/?q=',
+          index: algoliasearch('latency', '6be0576ff61c053d5f9a3225e2a90f76').initIndex('instant_search'),
+          keys: {
+            main: 'name',
+            secondary: 'description',
+            img: 'image'
+          },
+          parameters: {}
         }
       };
 
@@ -111,15 +162,103 @@ h1 {
 
       function createAutocomplete () {
         var query = null;
+        var popularIndex = client.initIndex(index + '_popular_searches');
+        var dataIndex = AVAILABLE[index].index;
+        var dataKeys = AVAILABLE[index].keys;
+        var dataParameters = AVAILABLE[index].parameters;
+        var recentSearches = RECENT_SEARCHES[index];
+
+        function getRecents (q) {
+          return recentSearches.filter(function(search) {
+            return search.indexOf(q) !== -1;
+          }).slice(0, QUERIES_AMOUNT);
+        }
+
+        function addRecent (q) {
+          q = (q || '').toLowerCase();
+          if (!q) return;
+          var firstRecent = recentSearches[0];
+          if (firstRecent.indexOf(q) !== -1) return;
+          if (q.indexOf(firstRecent) !== -1) {
+            recentSearches[0] = q;
+            return;
+          }
+          recentSearches.unshift(q);
+        }
+
+        function buildEntry (suggestionType, content) {
+          var icon = '';
+          if (suggestionType === 'recent') icon = 'clock-o';
+          if (suggestionType === 'popular') icon = 'search';
+          return '' +
+            '<span class="suggestion-left">' +
+            '  <i class="fa fa-' + icon + '"></i>' +
+            '</span>' +
+            '<span class="suggestion-right">' +
+            '  <span class="suggested-query suggested-' + suggestionType + '">' +
+            '    ' + content +
+            '  </span>' +
+            '</span>';
+        }
+
         $title.innerText = AVAILABLE[index].title + ' popular searches';
         $search_input.placeholder = AVAILABLE[index].placeholder;
-        aa = autocomplete('#search_input', { debug: true, hint: false }, [
+
+        aa = autocomplete('#search_input', { hint: false, openOnFocus: true, minLength: 0 }, [
           {
-            source: autocomplete.sources.hits(client.initIndex(index + '_popular_searches'), { hitsPerPage: 8, highlightPreTag: '<span class="highlight">', highlightPostTag: '</span>' }),
+            source: function (q, cb) {
+
+              var res = [];
+              var recents = getRecents(q);
+
+              var popularPromise = popularIndex.search(q, {
+                hitsPerPage: QUERIES_AMOUNT,
+                highlightPreTag: '<span class="highlight">',
+                highlightPostTag: '</span>'
+              }).then(function (content) {
+                return content.hits.filter(function (h) {
+                  return recents.indexOf(h.query) === -1;
+                }).map(function (h) {
+                  return buildEntry('popular', h._highlightResult.query.value);
+                }).slice(0, QUERIES_AMOUNT - recents.length);
+              }).catch(function (error) {
+                console.error(error);
+              });
+
+              var dataPromise = dataIndex.search(q, Object.assign({}, dataParameters, {
+                hitsPerPage: 20,
+                highlightPreTag: '<span class="highlight">',
+                highlightPostTag: '</span>',
+                attributesToRetrieve: [dataKeys.img],
+                attributesToHighlight: [dataKeys.main],
+                attributesToSnippet: [dataKeys.secondary + ':20']
+              })).then(function (content) {
+                return content.hits.map(function (h) {
+                  return '' +
+                    '<span class="suggestion-left">' +
+                    '</span>' +
+                    '<span class="suggestion-right">' +
+                    '  ' + ((!h._highlightResult || !h._highlightResult[dataKeys.main]) ? ('No ' + dataKeys.main) : h._highlightResult[dataKeys.main].value) +
+                    '</span>'
+                    ;
+                });
+              });
+
+              res = res.concat(recents.map(function (search) {
+                var highlighted = search.replace(new RegExp(escapeRegExp(q), 'g'), '<span class="highlight">$&</span>');
+                return buildEntry('recent', highlighted);
+              }));
+              Promise.all([popularPromise, dataPromise]).then(function (data) {
+                data.forEach(function (arr) {
+                  res = res.concat(arr);
+                });
+                cb(res);
+              });
+            },
             displayKey: 'query',
             templates: {
               suggestion: function(suggestion) {
-                return suggestion._highlightResult.query.value;
+                return suggestion;
               },
               footer: function(opts) {
                 query = opts.query;
@@ -136,6 +275,9 @@ h1 {
           window.location.href = AVAILABLE[index].url + encodeURIComponent(suggestion.query);
         });
         $search_input.focus();
+        $search_input.addEventListener('blur', function () {
+          addRecent($search_input.value);
+        });
       }
       createAutocomplete();
 
