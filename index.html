@@ -11,8 +11,77 @@
   box-sizing: border-box;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #f8f8f8;
+}
+
 .fa:before {
   font-family: FontAwesome, Open Sans, sans-serif;
+}
+
+header {
+  overflow: hidden;
+}
+
+#index_selector_wrapper {
+  float: left;
+  width: 48px;
+  height: 48px;
+  position: relative;
+  border-radius: 3px;
+}
+
+#logo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 3px;
+}
+
+#index_selector {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 98%;
+  height: 98%;
+  z-index: 0;
+  outline: none;
+  border-radius: 10px;
+}
+
+#input_wrapper {
+  margin-left: 48px;
+  padding: 8px;
+  padding-top: 12px;
+}
+
+#search_input {
+  width: 100%;
+  padding: 4px 8px;
+  background: transparent;
+  color: white;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid white;
+}
+
+#search_input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+  color: white;
+}
+#search_input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color: white;
+  opacity: 1;
+}
+#search_input::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color: white;
+  opacity: 1;
+}
+#search_input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: white;
 }
 
 h1 {
@@ -20,60 +89,55 @@ h1 {
 }
 
 .algolia-autocomplete {
-  width: 100%;
-}
-
-#search_input {
-  width: 100%;
-  padding: 8px 16px;
+  width: 100% !important;
+  left: 0 !important;
 }
 
 .aa-dropdown-menu {
   position: relative;
   width: 100%;
-  margin-top: 16px;
+  margin-top: 12px;
   background: #ffffff;
-  border: 2px solid #e8e8e8;
 }
 
-.aa-dropdown-menu:after, .aa-dropdown-menu:before {
-  bottom: 100%;
-  right: 20px;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
-}
-
-.aa-dropdown-menu:after {
-  border-color: rgba(255, 255, 255, 0);
-  border-bottom-color: #ffffff;
-  border-width: 12px;
-  margin-left: -12px;
-  right: 22px;
-}
-
-.aa-dropdown-menu:before {
-  border-color: rgba(232, 232, 232, 0);
-  border-bottom-color: #e8e8e8;
-  border-width: 14px;
-  margin-left: -14px;
+.aa-dataset-0 {
+  border-bottom: 1px solid #ccc;
 }
 
 .aa-suggestion {
   padding: 8px 8px;
-  border-bottom: 1px solid #ebebeb;
   cursor: pointer;
 }
+
+.aa-dataset-0 .aa-suggestion {
+  padding: 12px 8px;
+}
+
+.aa-dataset-1 .aa-suggestion {
+  border-bottom: 1px solid #ebebeb;
+}
+
 
 .aa-suggestion.aa-cursor {
   background: #f8f8f8;
 }
 
+.suggestion-left i {
+  width: 48px;
+  display: inline-block;
+  text-align: center;
+}
+
 .highlight {
   font-weight: bold;
+}
+
+.results-header {
+  display: block;
+  padding: 4px 16px;
+  font-size: 0.9em;
+  background: #e8e8e8;
+  width: 100%;
 }
 
 .aa-footer {
@@ -82,16 +146,23 @@ h1 {
     </style>
   </head>
   <body>
-    <select id="index_selector">
-      <option value="hackernews" selected>HackerNews</option>
-      <option value="instant_search">Instant Search demo</option>
-    </select>
 
-    <h1 id="title">Search in HackerNews popular searches</h1>
-    <input id="search_input" type="text" autocomplete="off" placeholder="Search for HackerNews topics" autofocus="autofocus" />
+    <header id="header">
+      <div id="index_selector_wrapper">
+        <img id="logo" />
+        <select id="index_selector">
+          <option value="hackernews" selected>HackerNews</option>
+          <option value="instant_search">Instant Search demo</option>
+        </select>
+      </div>
+
+      <div id="input_wrapper">
+        <input id="search_input" type="text" autocomplete="off" placeholder="" />
+      </div>
+    </header>
 
     <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/autocomplete.js/0.24/autocomplete.min.js"></script>
     <script>
       function escapeHtml (text) {
         return text
@@ -125,10 +196,11 @@ h1 {
 
       var AVAILABLE = {
         hackernews: {
-          title: 'HackerNews',
           placeholder: 'Search for HackerNews topics',
           url: 'https://hn.algolia.com/?q=',
+          logo: 'https://hn.algolia.com/assets/logo-hn-search.png',
           index: algoliasearch('UJ5WYC0L7X', '08240194d5ef567a9f14e0f066bace0c').initIndex('Item_production'),
+          background: '#ff742b',
           keys: {
             main: 'title',
             secondary: 'story_text',
@@ -143,10 +215,11 @@ h1 {
           }
         },
         instant_search: {
-          title: 'Instant Search demo',
           placeholder: 'Search for products suggestions',
           url: 'https://demos.algolia.com/instant-search-demo/?q=',
+          logo: 'https://d13yacurqjgara.cloudfront.net/users/1090953/avatars/small/3a0f064859092a0e82bedddcee24a4a8.png?1481542786',
           index: algoliasearch('latency', '6be0576ff61c053d5f9a3225e2a90f76').initIndex('instant_search'),
+          background: '#0a1724',
           keys: {
             main: 'name',
             secondary: 'description',
@@ -157,8 +230,9 @@ h1 {
         }
       };
 
+      var $header = document.getElementById('header');
+      var $logo = document.getElementById('logo');
       var $index_selector = document.getElementById('index_selector');
-      var $title = document.getElementById('title');
       var $search_input = document.getElementById('search_input');
 
       var index = $index_selector.value;
@@ -215,12 +289,14 @@ h1 {
           };
         }
 
-        $title.innerText = AVAILABLE[index].title + ' popular searches';
+        $header.style.backgroundColor = AVAILABLE[index].background;
+        $logo.src = AVAILABLE[index].logo;
         $search_input.placeholder = AVAILABLE[index].placeholder;
 
-        aa = autocomplete('#search_input', { hint: false, openOnFocus: true, minLength: 0 }, [
+        aa = autocomplete('#search_input', { debug: true, hint: false, appendTo: 'body', openOnFocus: true, minLength: 0 }, [
           {
             source: function (q, cb) {
+              query = q;
 
               var res = [];
               var recents = getRecents(q);
@@ -239,6 +315,27 @@ h1 {
                 console.error(error);
               });
 
+              res = res.concat(recents.map(function (search) {
+                var highlighted = search.replace(new RegExp(escapeRegExp(q), 'g'), '<span class="highlight">$&</span>');
+                return buildEntry('recent', search, highlighted);
+              }));
+              popularPromise.then(function (data) {
+                res = res.concat(data);
+                cb(res);
+              });
+            },
+            displayKey: 'query',
+            templates: {
+              suggestion: function(suggestion) {
+                return suggestion.html;
+              }
+            }
+          }, {
+            source: function (q, cb) {
+              if (!q) {
+                cb([]);
+                return;
+              }
               var dataPromise = dataIndex.search(q, Object.assign({}, dataParameters, {
                 hitsPerPage: 20,
                 highlightPreTag: '<span class="highlight">',
@@ -254,31 +351,21 @@ h1 {
                       '<span class="suggestion-left">' +
                       '</span>' +
                       '<span class="suggestion-right">' +
+                      '  <span class="ellipsis result-title">' +
                       '  ' + ((!h._highlightResult || !h._highlightResult[dataKeys.main]) ? ('No ' + dataKeys.main) : h._highlightResult[dataKeys.main].value) +
+                      '  </span>' +
                       '</span>'
                   };
                 });
-              });
-
-              res = res.concat(recents.map(function (search) {
-                var highlighted = search.replace(new RegExp(escapeRegExp(q), 'g'), '<span class="highlight">$&</span>');
-                return buildEntry('recent', search, highlighted);
-              }));
-              Promise.all([popularPromise, dataPromise]).then(function (data) {
-                data.forEach(function (arr) {
-                  res = res.concat(arr);
-                });
-                cb(res);
-              });
+              }).catch(function (error) {
+                console.error(error);
+              }).then(cb);
             },
-            displayKey: 'query',
+            displayKey: dataKeys.main,
             templates: {
+              header: '<span class="results-header">Results</span>',
               suggestion: function(suggestion) {
                 return suggestion.html;
-              },
-              footer: function(opts) {
-                query = opts.query;
-                return '<div class="aa-suggestion aa-footer">Search for results matching "' + query + '"</div>'
               }
             }
           }
