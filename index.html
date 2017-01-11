@@ -100,7 +100,7 @@ h1 {
   background: #ffffff;
 }
 
-.aa-dataset-0 {
+.aa-dropdown-menu > div:first-child {
   border-bottom: 1px solid #ccc;
 }
 
@@ -109,11 +109,11 @@ h1 {
   cursor: pointer;
 }
 
-.aa-dataset-0 .aa-suggestion {
+.aa-dropdown-menu > div:first-child .aa-suggestion {
   padding: 12px 8px;
 }
 
-.aa-dataset-1 .aa-suggestion {
+.aa-dropdown-menu > div:last-child .aa-suggestion {
   border-bottom: 1px solid #ebebeb;
 }
 
@@ -132,12 +132,29 @@ h1 {
   font-weight: bold;
 }
 
+.suggestion-left {
+  display: block;
+  float: left;
+}
+
+.suggestion-right > span {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .results-header {
   display: block;
   padding: 4px 16px;
   font-size: 0.9em;
   background: #e8e8e8;
   width: 100%;
+}
+
+.result-secondary {
+  color: #44484f;
+  font-size: 0.8em;
 }
 
 .aa-footer {
@@ -342,7 +359,8 @@ h1 {
                 highlightPostTag: '</span>',
                 attributesToRetrieve: [dataKeys.img, dataKeys.url],
                 attributesToHighlight: [dataKeys.main],
-                attributesToSnippet: [dataKeys.secondary + ':20']
+                attributesToSnippet: [dataKeys.secondary + ':20'],
+                snippetEllipsisText: '...'
               })).then(function (content) {
                 return content.hits.map(function (h) {
                   return {
@@ -351,8 +369,11 @@ h1 {
                       '<span class="suggestion-left">' +
                       '</span>' +
                       '<span class="suggestion-right">' +
-                      '  <span class="ellipsis result-title">' +
+                      '  <span class="ellipsis result-main">' +
                       '  ' + ((!h._highlightResult || !h._highlightResult[dataKeys.main]) ? ('No ' + dataKeys.main) : h._highlightResult[dataKeys.main].value) +
+                      '  </span>' +
+                      '  <span class="ellipsis result-secondary">' +
+                      '  ' + ((!h._snippetResult || !h._snippetResult[dataKeys.secondary]) ? '' : h._snippetResult[dataKeys.secondary].value) +
                       '  </span>' +
                       '</span>'
                   };
