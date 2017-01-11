@@ -183,6 +183,10 @@ h1 {
             recentSearches[0] = q;
             return;
           }
+          var idx = recentSearches.indexOf(q);
+          if (idx !== -1) {
+            recentSearches.splice(idx, 1);
+          }
           recentSearches.unshift(q);
         }
 
