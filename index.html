@@ -309,7 +309,7 @@ h1 {
     <script>
       var QUERIES_AMOUNT = 8;
 
-      var AVAILABLE = {
+      var SETTINGS = {
         hackernews: {
           placeholder: 'Search for HackerNews topics',
           url: 'https://hn.algolia.com/?q=',
@@ -358,16 +358,17 @@ h1 {
         var query = null;
         var recentStore = new RecentStore(index);
         var popularIndex = client.initIndex(index + '_popular_searches');
-        var dataIndex = AVAILABLE[index].index;
-        var dataKeys = AVAILABLE[index].keys;
-        var dataParameters = AVAILABLE[index].parameters;
+        var settings = SETTINGS[index];
+        var dataIndex = settings.index;
+        var dataKeys = settings.keys;
+        var dataParameters = settings.parameters;
 
         function buildEntry (suggestionType, query, content) {
           var icon = '';
           if (suggestionType === 'recent') icon = 'clock-o';
           if (suggestionType === 'popular') icon = 'search';
           return {
-            url: AVAILABLE[index].url + encodeURIComponent(query),
+            url: settings.url + encodeURIComponent(query),
             html: '' +
               '<span class="suggestion">' +
               '  <span class="suggestion-left">' +
@@ -382,9 +383,9 @@ h1 {
           };
         }
 
-        $header.style.backgroundColor = AVAILABLE[index].background;
-        $logo.src = AVAILABLE[index].logo;
-        $search_input.placeholder = AVAILABLE[index].placeholder;
+        $header.style.backgroundColor = settings.background;
+        $logo.src = settings.logo;
+        $search_input.placeholder = settings.placeholder;
 
         aa = autocomplete('#search_input', { debug: true, hint: false, appendTo: 'body', openOnFocus: true, minLength: 0 }, [
           {
@@ -441,7 +442,7 @@ h1 {
               })).then(function (content) {
                 return content.hits.map(function (h) {
                   return {
-                    url: h[dataKeys.url] || AVAILABLE[index].buildUrl(h),
+                    url: h[dataKeys.url] || settings.buildUrl(h),
                     html: '' +
                       '<span class="suggestion-left">' +
                       '</span>' +
@@ -469,7 +470,7 @@ h1 {
           }
         ]).on('autocomplete:selected', function(event, suggestion, dataset) {
           if (suggestion === undefined) {
-            window.location.href = AVAILABLE[index].url + query;
+            window.location.href = settings.url + query;
           }
           window.location.href = suggestion.url;
         });
