@@ -365,7 +365,6 @@ h1 {
       var aa = null;
 
       function createAutocomplete () {
-        var query = null;
         var recentStore = new RecentStore(index);
         var popularIndex = client.initIndex(index + '_popular_searches');
         var settings = SETTINGS[index];
@@ -400,8 +399,6 @@ h1 {
         aa = autocomplete('#search_input', { debug: true, hint: false, appendTo: 'body', openOnFocus: true, minLength: 0 }, [
           {
             source: function (q, cb) {
-              query = q;
-
               var res = [];
               var recents = recentStore.search(q, QUERIES_AMOUNT);
 
