@@ -183,7 +183,8 @@ h1 {
 
     <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
     <script src="https://cdn.jsdelivr.net/autocomplete.js/0.24/autocomplete.min.js"></script>
-    <script>
+    <script type="text/javascript">
+      /* Helper methods */
       function escapeHtml (text) {
         return text
           .replace(/&/g, "&amp;")
@@ -196,23 +197,117 @@ h1 {
       function escapeRegExp (str) {
         return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
       }
+    </script>
+    <script type="text/javascript">
+      /* RecentStore */
 
+      (function () {
+        var STORE_KEY = 'recentStore';
+        var KEEP_SIZE = 3;
+        var KEEP_DAYS = 30;
+        var KEEP_AMOUNT = 100;
+
+        var DEFAULT_RECENT_SEARCHES = {
+          hackernews: [
+            'apple',
+            'iphone 7',
+            'facebook',
+            'amazon'
+          ],
+          instant_search: [
+            'iphone 7',
+            'iphone 6s',
+            'iphone 6',
+            'iphone'
+          ]
+        };
+        for (var key in DEFAULT_RECENT_SEARCHES) {
+          if (!DEFAULT_RECENT_SEARCHES.hasOwnProperty(key)) return;
+          DEFAULT_RECENT_SEARCHES[key] = DEFAULT_RECENT_SEARCHES[key].map(function (q) {
+            return {
+              query: q,
+              updated_at: new Date()
+            };
+          });
+        }
+
+        window.RecentStore = function RecentStore (key) {
+          this.key = key;
+          this.load();
+        }
+
+        // Recent searches
+        RecentStore.prototype.search = function search (query, amount) {
+          var qReg = RecentStore.queryRegExp(query);
+          return this.data
+            .filter(function (qObj) {
+              var qQuery = qObj.query;
+              return qQuery.match(qReg) && qQuery !== query;
+            })
+            .slice(0, amount)
+            .map(function (qObj) { return qObj.query; })
+        };
+
+        RecentStore.prototype.store = function store (query) {
+          if (!query) return;
+          if (query.length < KEEP_SIZE) return;
+          var first = this.data[0];
+          if (first.query.indexOf(query) !== -1) return;
+          if (query.indexOf(first.query) !== -1) this.shift();
+          for (var i = 0; i < this.data.length; ++i) { // Duplicates
+            if (this.data[i].query !== query) continue;
+            this.data.splice(i, 1);
+            break;
+          }
+          this.data.unshift({ query: query, updated_at: new Date() });
+          this.save();
+        };
+
+        // Browser storage
+        RecentStore.prototype._mainStore = function _mainStore () {
+          if (!window.localStorage) return DEFAULT_RECENT_SEARCHES;
+          if (!window.localStorage[STORE_KEY]) return DEFAULT_RECENT_SEARCHES;
+          return JSON.parse(window.localStorage[STORE_KEY]);
+        };
+
+        RecentStore.prototype.load = function load () {
+          this.data = this._mainStore()[this.key].map(function (qObj) {
+            return {
+              query: qObj.query,
+              updated_at: new Date(qObj.updated_at)
+            };
+          });
+        };
+
+        RecentStore.prototype.clean = function clean () {
+          var timeLimit = new Date(new Date() - KEEP_DAYS);
+          this.data
+            .filter(function (qObj) { return qObj.updated_at > timeLimit; })
+            .slice(0, KEEP_AMOUNT);
+        };
+
+        RecentStore.prototype.save = function save () {
+          this.clean();
+          if (!window.localStorage) return;
+          var mainStore = this._mainStore();
+          mainStore[this.key] = this.data;
+          window.localStorage[STORE_KEY] = JSON.stringify(mainStore);
+        };
+
+        RecentStore.queryRegExp = function queryRegExp (query) {
+          return new RegExp('(^|\s)' + escapeRegExp(query));
+        };
+
+        RecentStore.highlight = function highlight (query) {
+          return query.replace(
+            RecentStore.queryRegExp(query),
+            '$1' + '<span class="highlight">' + query + '</span>'
+          );
+        };
+      }());
+    </script>
+    <script>
       var QUERIES_AMOUNT = 8;
-
-      var RECENT_SEARCHES = {
-        hackernews: [
-          'apple',
-          'iphone 7',
-          'facebook',
-          'amazon'
-        ],
-        instant_search: [
-          'iphone 7',
-          'iphone 6s',
-          'iphone 6',
-          'iphone'
-        ]
-      };
 
       var AVAILABLE = {
         hackernews: {
@@ -261,33 +356,11 @@ h1 {
 
       function createAutocomplete () {
         var query = null;
+        var recentStore = new RecentStore(index);
         var popularIndex = client.initIndex(index + '_popular_searches');
         var dataIndex = AVAILABLE[index].index;
         var dataKeys = AVAILABLE[index].keys;
         var dataParameters = AVAILABLE[index].parameters;
-        var recentSearches = RECENT_SEARCHES[index];
-
-        function getRecents (q) {
-          return recentSearches.filter(function(search) {
-            return search.indexOf(q) !== -1;
-          }).slice(0, QUERIES_AMOUNT);
-        }
-
-        function addRecent (q) {
-          q = (q || '').toLowerCase();
-          if (!q) return;
-          var firstRecent = recentSearches[0];
-          if (firstRecent.indexOf(q) !== -1) return;
-          if (q.indexOf(firstRecent) !== -1) {
-            recentSearches[0] = q;
-            return;
-          }
-          var idx = recentSearches.indexOf(q);
-          if (idx !== -1) {
-            recentSearches.splice(idx, 1);
-          }
-          recentSearches.unshift(q);
-        }
 
         function buildEntry (suggestionType, query, content) {
           var icon = '';
@@ -319,7 +392,7 @@ h1 {
               query = q;
 
               var res = [];
-              var recents = getRecents(q);
+              var recents = recentStore.search(q, QUERIES_AMOUNT);
 
               var popularPromise = popularIndex.search(q, {
                 hitsPerPage: QUERIES_AMOUNT,
@@ -335,10 +408,11 @@ h1 {
                 console.error(error);
               });
 
-              res = res.concat(recents.map(function (search) {
-                var highlighted = search.replace(new RegExp(escapeRegExp(q), 'g'), '<span class="highlight">$&</span>');
-                return buildEntry('recent', search, highlighted);
-              }));
+              res = res.concat(
+                  recents.map(function (search) {
+                    return buildEntry('recent', search, RecentStore.highlight(search));
+                  })
+              );
               popularPromise.then(function (data) {
                 res = res.concat(data);
                 cb(res);
@@ -401,7 +475,7 @@ h1 {
         });
         $search_input.focus();
         $search_input.addEventListener('blur', function () {
-          addRecent($search_input.value);
+          recentStore.store($search_input.value);
         });
       }
       createAutocomplete();
