@@ -538,7 +538,6 @@ h1 {
           $search_wrapper.classList.remove('input-not-focused');
           $search_wrapper.classList.add('input-focused');
           recentStore.store($search_input.value);
-          document.body.scrollTop = document.documentElement.scrollTop = 0;
         }
 
         function onBlur () {
@@ -581,6 +580,8 @@ h1 {
           {
             source: function (q, cb) {
               query = q;
+
+              document.body.scrollTop = document.documentElement.scrollTop = 0;
 
               if (q) {
                 $search_wrapper.classList.remove('empty-query');
