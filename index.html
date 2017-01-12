@@ -86,11 +86,13 @@ header {
 #input_wrapper {
   margin-left: 48px;
   padding: 8px;
+  position: relative;
 }
 
 #search_input {
   width: 100%;
   padding: 4px;
+  padding-right: 16px;
   background: transparent;
   color: inherit;
   border: none;
@@ -98,6 +100,28 @@ header {
   border-bottom: 1px solid white;
   border-radius: 0;
   font-size: 16px;
+}
+
+#clear_button {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.empty-query #clear_button {
+  display: none;
+}
+
+.clear-button-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBvcGFjaXR5PSIwLjYiPjxwYXRoIGQ9Ik0uNTY2IDEuNjk4TDAgMS4xMyAxLjEzMiAwbC41NjUuNTY2TDYgNC44NjggMTAuMzAyLjU2NiAxMC44NjggMCAxMiAxLjEzMmwtLjU2Ni41NjVMNy4xMzIgNmw0LjMwMiA0LjMuNTY2LjU2OEwxMC44NjggMTJsLS41NjUtLjU2Nkw2IDcuMTMybC00LjMgNC4zMDJMMS4xMyAxMiAwIDEwLjg2OGwuNTY2LS41NjVMNC44NjggNiAuNTY2IDEuNjk4eiIvPjwvc3ZnPg==');
+  background-position: center center;
+  background-repeat: no-repeat;
+  fill: white;
 }
 
 #search_input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
@@ -228,6 +252,9 @@ h1 {
 
         <div id="input_wrapper">
           <input id="search_input" type="text" autocomplete="off" placeholder="" />
+          <div id="clear_button">
+            <i class="clear-button-icon"></i>
+          </div>
         </div>
       </header>
     </div>
@@ -440,6 +467,7 @@ h1 {
       var $logo = document.getElementById('logo');
       var $back_button = document.getElementById('back_button');
       var $search_input = document.getElementById('search_input');
+      var $clear_button = document.getElementById('clear_button');
 
       var index = $index_selector.value;
       var client = algoliasearch('OMDED4ZQES', '24c5f81bb301609f7dced52863634ec6')
@@ -498,6 +526,10 @@ h1 {
 
         function onBack () {
           load('');
+        }
+
+        function onClear () {
+          changeVal('');
         }
 
         $header.style.backgroundColor = settings.background;
@@ -588,6 +620,7 @@ h1 {
         });
 
         $back_button.addEventListener('mousedown', onBack);
+        $clear_button.addEventListener('mouseup', onClear);
         $search_input.addEventListener('blur', onBlur);
         $search_input.addEventListener('focus', onFocus);
 
