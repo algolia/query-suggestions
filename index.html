@@ -394,6 +394,7 @@ h1 {
 
         $header.style.backgroundColor = settings.background;
         $logo.src = settings.logo;
+        $search_input.value = '';
         $search_input.placeholder = settings.placeholder;
 
         aa = autocomplete('#search_input', { debug: true, hint: false, appendTo: 'body', openOnFocus: true, minLength: 0 }, [
