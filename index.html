@@ -25,6 +25,7 @@ html, body {
 
 header {
   overflow: hidden;
+  color: white;
 }
 
 #header_left {
@@ -61,6 +62,22 @@ header {
   border-radius: 10px;
 }
 
+#back_button {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  padding-top: 4px;
+  cursor: pointer;
+}
+
+.input-not-focused #back_button {
+  display: none;
+}
+
+.input-focused #index_selector_wrapper {
+  display: none;
+}
+
 #input_wrapper {
   margin-left: 48px;
   padding: 8px;
@@ -70,7 +87,7 @@ header {
   width: 100%;
   padding: 4px;
   background: transparent;
-  color: white;
+  color: inherit;
   border: none;
   outline: none;
   border-bottom: 1px solid white;
@@ -175,21 +192,26 @@ h1 {
   </head>
   <body>
 
-    <header id="header">
-      <div id="header_left">
-        <div id="index_selector_wrapper">
-          <img id="logo" />
-          <select id="index_selector">
-            <option value="hackernews" selected>HackerNews</option>
-            <option value="instant_search">Instant Search demo</option>
-          </select>
+    <div id="search_wrapper">
+      <header id="header">
+        <div id="header_left">
+          <div id="index_selector_wrapper">
+            <img id="logo" />
+            <select id="index_selector">
+              <option value="hackernews" selected>HackerNews</option>
+              <option value="instant_search">Instant Search demo</option>
+            </select>
+          </div>
+          <div id="back_button">
+            <i class="fa fa-caret-left"></i>
+          </div>
         </div>
-      </div>
 
-      <div id="input_wrapper">
-        <input id="search_input" type="text" autocomplete="off" placeholder="" />
-      </div>
-    </header>
+        <div id="input_wrapper">
+          <input id="search_input" type="text" autocomplete="off" placeholder="" />
+        </div>
+      </header>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
     <script src="https://cdn.jsdelivr.net/autocomplete.js/0.24/autocomplete.min.js"></script>
@@ -355,9 +377,12 @@ h1 {
         }
       };
 
+      var $search_wrapper = document.getElementById('search_wrapper');
       var $header = document.getElementById('header');
-      var $logo = document.getElementById('logo');
+      var $index_selector_wrapper = document.getElementById('index_selector_wrapper');
       var $index_selector = document.getElementById('index_selector');
+      var $logo = document.getElementById('logo');
+      var $back_button = document.getElementById('back_button');
       var $search_input = document.getElementById('search_input');
 
       var index = $index_selector.value;
@@ -392,11 +417,23 @@ h1 {
           };
         }
 
+        function load () {
+          $search_input.focus();
+          $search_input.blur();
+        }
+
         function onFocus () {
+          $search_wrapper.className = 'input-focused';
           recentStore.store($search_input.value);
         }
 
         function onBlur () {
+          $search_wrapper.className = 'input-not-focused';
+        }
+
+        function onBack () {
+          aa.autocomplete.setVal('');
+          load();
         }
 
         $header.style.backgroundColor = settings.background;
@@ -404,7 +441,7 @@ h1 {
         $search_input.value = '';
         $search_input.placeholder = settings.placeholder;
 
-        aa = autocomplete('#search_input', { debug: true, hint: false, appendTo: 'body', openOnFocus: true, minLength: 0 }, [
+        aa = autocomplete('#search_input', { debug: true, hint: false, appendTo: '#search_wrapper', openOnFocus: true, minLength: 0 }, [
           {
             source: function (q, cb) {
               var res = [];
@@ -490,11 +527,11 @@ h1 {
           window.location.href = suggestion.url;
         });
 
+        $back_button.addEventListener('mousedown', onBack);
         $search_input.addEventListener('blur', onBlur);
         $search_input.addEventListener('focus', onFocus);
 
-        $search_input.focus();
-        $search_input.blur();
+        load();
       }
       createAutocomplete();
 
