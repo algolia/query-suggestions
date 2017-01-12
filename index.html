@@ -73,6 +73,7 @@ header {
   height: 100%;
   padding-top: 4px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .input-not-focused #back_button {
@@ -84,7 +85,8 @@ header {
 }
 
 #input_wrapper {
-  margin-left: 48px;
+  margin-left: 56px;
+  margin-right: 48px;
   padding: 8px;
   position: relative;
 }
@@ -246,7 +248,7 @@ h1 {
             </select>
           </div>
           <div id="back_button">
-            <i class="fa fa-caret-left"></i>
+            <i class="fa fa-caret-left"></i> Back
           </div>
         </div>
 
@@ -473,6 +475,7 @@ h1 {
       var client = algoliasearch('OMDED4ZQES', '24c5f81bb301609f7dced52863634ec6')
       var aa = null;
       var query = null;
+      var sentEnter = false;
 
       function createAutocomplete () {
         var recentStore = new RecentStore(index);
@@ -532,6 +535,14 @@ h1 {
           changeVal('');
         }
 
+        function onSearch (e) {
+          if (e.keyCode !== 13) return;
+          sentEnter = true;
+          $search_input.blur();
+          $search_input.focus();
+          $search_input.blur();
+        }
+
         $header.style.backgroundColor = settings.background;
         $logo.src = settings.logo;
         $search_input.value = '';
@@ -548,6 +559,12 @@ h1 {
               } else {
                 $search_wrapper.classList.remove('not-empty-query');
                 $search_wrapper.classList.add('empty-query');
+              }
+
+              if (sentEnter) {
+                cb([]);
+                sentEnter = false;
+                return;
               }
 
               var currAmount = q ? MIN_QUERIES_AMOUNT : MAX_QUERIES_AMOUNT;
@@ -609,7 +626,6 @@ h1 {
         ]).on('autocomplete:selected', function(event, suggestion, dataset) {
           event.preventDefault();
           if (suggestion === undefined) {
-            changeVal(query);
             return;
           }
           if (suggestion.query) {
@@ -621,6 +637,7 @@ h1 {
 
         $back_button.addEventListener('mousedown', onBack);
         $clear_button.addEventListener('mouseup', onClear);
+        $search_input.addEventListener('keyup', onSearch);
         $search_input.addEventListener('blur', onBlur);
         $search_input.addEventListener('focus', onFocus);
 
