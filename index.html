@@ -404,7 +404,8 @@ h1 {
       var MIN_QUERIES_AMOUNT = 4;
 
       var PX_TO_INFINITE_SCROLL = 300;
-      var RESULTS_PER_SEARCH = 20;
+      var PX_TO_REMOVE_QUERIES = 300;
+      var RESULTS_PER_SEARCH = 50;
 
       var SETTINGS = {
         hackernews: {
@@ -598,10 +599,16 @@ h1 {
           });
         }
 
-        function checkScroll () {
+        function onScroll () {
           var scroll = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
           var viewportHeight = window.innerHeight;
           var height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+          if (scroll > PX_TO_REMOVE_QUERIES) {
+            onBlur();
+            var newHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+            document.body.scrollTop = document.documentElement.scrollTop = scroll - (height - newHeight);
+            $search_input.blur();
+          }
           if (scroll + viewportHeight + PX_TO_INFINITE_SCROLL > height) {
             addResults();
           }
@@ -720,7 +727,7 @@ h1 {
         $search_input.addEventListener('blur', onBlur);
         $search_input.addEventListener('focus', onFocus);
         $search_input.focus();
-        window.addEventListener('scroll', checkScroll);
+        window.addEventListener('scroll', onScroll);
 
         load('');
       }
