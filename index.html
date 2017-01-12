@@ -76,6 +76,15 @@ header {
   white-space: nowrap;
 }
 
+#search_button {
+  float: right;
+  height: 48px;
+  width: 48px;
+  padding: 10px 16px 10px 8px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
 .input-not-focused #back_button {
   display: none;
 }
@@ -250,6 +259,9 @@ h1 {
           <div id="back_button">
             <i class="fa fa-caret-left"></i> Back
           </div>
+        </div>
+        <div id="search_button">
+          <i class="fa fa-search"></i>
         </div>
 
         <div id="input_wrapper">
@@ -468,6 +480,7 @@ h1 {
       var $index_selector = document.getElementById('index_selector');
       var $logo = document.getElementById('logo');
       var $back_button = document.getElementById('back_button');
+      var $search_button = document.getElementById('search_button');
       var $search_input = document.getElementById('search_input');
       var $clear_button = document.getElementById('clear_button');
 
@@ -535,8 +548,7 @@ h1 {
           changeVal('');
         }
 
-        function onSearch (e) {
-          if (e.keyCode !== 13) return;
+        function onSearch () {
           sentEnter = true;
           $search_input.blur();
           $search_input.focus();
@@ -637,8 +649,12 @@ h1 {
         });
 
         $back_button.addEventListener('mousedown', onBack);
+        $search_button.addEventListener('mousedown', onSearch);
         $clear_button.addEventListener('mouseup', onClear);
-        $search_input.addEventListener('keyup', onSearch);
+        $search_input.addEventListener('keyup', function (e) {
+          if (e.keyCode !== 13) return;
+          onSearch();
+        });
         $search_input.addEventListener('blur', onBlur);
         $search_input.addEventListener('focus', onFocus);
 
