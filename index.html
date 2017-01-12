@@ -124,12 +124,11 @@ h1 {
 .aa-dropdown-menu {
   position: relative;
   width: 100%;
-  margin-top: 12px;
+  margin-top: 9px;
   background: #ffffff;
 }
 
-.aa-dropdown-menu > div:first-child {
-  padding-bottom: 8px;
+.aa-dataset-queries {
   border-bottom: 1px solid #ccc;
 }
 
@@ -138,12 +137,20 @@ h1 {
   cursor: pointer;
 }
 
-.aa-dropdown-menu > div:first-child .aa-suggestion {
+.aa-dataset-queries .aa-suggestion {
   padding: 12px 8px;
 }
 
-.aa-dropdown-menu > div:last-child .aa-suggestion {
+.aa-dataset-results .aa-suggestion {
   border-bottom: 1px solid #ebebeb;
+}
+
+.input-not-focused .aa-dataset-queries, .input-not-focused .results-header {
+  display: none;
+}
+
+.input-focused.empty-query .aa-dataset-results, .input-focused.empty-query .results-header {
+  display: none;
 }
 
 .aa-suggestion.aa-cursor {
@@ -178,6 +185,10 @@ h1 {
   font-size: 0.9em;
   background: #e8e8e8;
   width: 100%;
+}
+
+.aa-without-queries .results-header {
+  display: none;
 }
 
 .result-secondary {
@@ -285,7 +296,7 @@ h1 {
           if (query.length < KEEP_SIZE) return;
           var first = this.data[0];
           if (first.query.indexOf(query) !== -1) return;
-          if (query.indexOf(first.query) !== -1) this.shift();
+          if (query.indexOf(first.query) !== -1) this.data.shift();
           for (var i = 0; i < this.data.length; ++i) { // Duplicates
             if (this.data[i].query !== query) continue;
             this.data.splice(i, 1);
@@ -327,11 +338,11 @@ h1 {
         };
 
         RecentStore.queryRegExp = function queryRegExp (query) {
-          return new RegExp('(^|\s)' + escapeRegExp(query));
+          return new RegExp('(^|\\s)' + escapeRegExp(query), 'g');
         };
 
-        RecentStore.highlight = function highlight (query) {
-          return query.replace(
+        RecentStore.highlight = function highlight (query, search) {
+          return search.replace(
             RecentStore.queryRegExp(query),
             '$1' + '<span class="highlight">' + query + '</span>'
           );
@@ -339,7 +350,8 @@ h1 {
       }());
     </script>
     <script>
-      var QUERIES_AMOUNT = 8;
+      var MAX_QUERIES_AMOUNT = 8;
+      var MIN_QUERIES_AMOUNT = 4;
 
       var SETTINGS = {
         hackernews: {
@@ -348,14 +360,23 @@ h1 {
           logo: 'https://hn.algolia.com/assets/logo-hn-search.png',
           index: algoliasearch('UJ5WYC0L7X', '08240194d5ef567a9f14e0f066bace0c').initIndex('Item_production'),
           background: '#ff742b',
-          keys: {
-            main: 'title',
-            secondary: 'story_text',
-            img: '',
-            url: 'url'
-          },
+          key: 'title',
           parameters: {
-            tagFilters: ['story']
+            tagFilters: ['story'],
+            attributesToSnippet: ['story_text:20']
+          },
+          template: function (h) {
+            return '' +
+            '<span class="suggestion-left">' +
+            '</span>' +
+            '<span class="suggestion-right">' +
+            '  <span class="ellipsis result-main">' +
+            '  ' + ((!h._highlightResult || !h._highlightResult.title) ? ('No title') : h._highlightResult.title.value) +
+            '  </span>' +
+            '  <span class="ellipsis result-secondary">' +
+            '  ' + ((!h._snippetResult || !h._snippetResult.story_text) ? '' : h._snippetResult.story_text.value) +
+            '  </span>' +
+            '</span>';
           },
           buildUrl: function (h) {
             return 'https://news.ycombinator.com/item?id=' + h.objectID;
@@ -367,13 +388,26 @@ h1 {
           logo: 'https://d13yacurqjgara.cloudfront.net/users/1090953/avatars/small/3a0f064859092a0e82bedddcee24a4a8.png?1481542786',
           index: algoliasearch('latency', '6be0576ff61c053d5f9a3225e2a90f76').initIndex('instant_search'),
           background: '#0a1724',
-          keys: {
-            main: 'name',
-            secondary: 'description',
-            img: 'image',
-            url: 'url'
+          key: 'name',
+          parameters: {
+            attributesToSnippet: ['description:20']
           },
-          parameters: {}
+          template: function (h) {
+            return '' +
+            '<span class="suggestion-left">' +
+            '</span>' +
+            '<span class="suggestion-right">' +
+            '  <span class="ellipsis result-main">' +
+            '  ' + ((!h._highlightResult || !h._highlightResult.name) ? ('No name') : h._highlightResult.name.value) +
+            '  </span>' +
+            '  <span class="ellipsis result-secondary">' +
+            '  ' + ((!h._snippetResult || !h._snippetResult.description) ? '' : h._snippetResult.description.value) +
+            '  </span>' +
+            '</span>';
+          },
+          buildUrl: function (h) {
+            return h.url;
+          }
         }
       };
 
@@ -388,13 +422,13 @@ h1 {
       var index = $index_selector.value;
       var client = algoliasearch('OMDED4ZQES', '24c5f81bb301609f7dced52863634ec6')
       var aa = null;
+      var query = null;
 
       function createAutocomplete () {
         var recentStore = new RecentStore(index);
         var popularIndex = client.initIndex(index + '_popular_searches');
         var settings = SETTINGS[index];
         var dataIndex = settings.index;
-        var dataKeys = settings.keys;
         var dataParameters = settings.parameters;
 
         function buildEntry (suggestionType, query, content) {
@@ -402,7 +436,7 @@ h1 {
           if (suggestionType === 'recent') icon = 'clock-o';
           if (suggestionType === 'popular') icon = 'search';
           return {
-            url: settings.url + encodeURIComponent(query),
+            query: query,
             html: '' +
               '<span class="suggestion">' +
               '  <span class="suggestion-left">' +
@@ -417,23 +451,31 @@ h1 {
           };
         }
 
-        function load () {
+        function load (query) {
+          aa.autocomplete.setVal(query);
           $search_input.focus();
           $search_input.blur();
         }
 
+        function changeVal (query) {
+          aa.autocomplete.setVal(query);
+          $search_input.blur();
+          $search_input.focus();
+        }
+
         function onFocus () {
-          $search_wrapper.className = 'input-focused';
+          $search_wrapper.classList.remove('input-not-focused');
+          $search_wrapper.classList.add('input-focused');
           recentStore.store($search_input.value);
         }
 
         function onBlur () {
-          $search_wrapper.className = 'input-not-focused';
+          $search_wrapper.classList.remove('input-focused');
+          $search_wrapper.classList.add('input-not-focused');
         }
 
         function onBack () {
-          aa.autocomplete.setVal('');
-          load();
+          load('');
         }
 
         $header.style.backgroundColor = settings.background;
@@ -444,27 +486,39 @@ h1 {
         aa = autocomplete('#search_input', { debug: true, hint: false, appendTo: '#search_wrapper', openOnFocus: true, minLength: 0 }, [
           {
             source: function (q, cb) {
+              query = q;
+
+              if (q) {
+                $search_wrapper.classList.remove('empty-query');
+                $search_wrapper.classList.add('not-empty-query');
+              } else {
+                $search_wrapper.classList.remove('not-empty-query');
+                $search_wrapper.classList.add('empty-query');
+              }
+
+              var currAmount = q ? MIN_QUERIES_AMOUNT : MAX_QUERIES_AMOUNT;
+
               var res = [];
-              var recents = recentStore.search(q, QUERIES_AMOUNT);
+              var recents = recentStore.search(q, currAmount);
 
               var popularPromise = popularIndex.search(q, {
-                hitsPerPage: QUERIES_AMOUNT,
+                hitsPerPage: currAmount + 1,
                 highlightPreTag: '<span class="highlight">',
                 highlightPostTag: '</span>'
               }).then(function (content) {
                 return content.hits.filter(function (h) {
-                  return recents.indexOf(h.query) === -1;
+                  return recents.indexOf(h.query) === -1 && h.query !== q;
                 }).map(function (h) {
                   return buildEntry('popular', h.query, h._highlightResult.query.value);
-                }).slice(0, QUERIES_AMOUNT - recents.length);
+                }).slice(0, currAmount - recents.length);
               }).catch(function (error) {
                 console.error(error);
               });
 
               res = res.concat(
-                  recents.map(function (search) {
-                    return buildEntry('recent', search, RecentStore.highlight(search));
-                  })
+                recents.map(function (search) {
+                  return buildEntry('recent', search, RecentStore.highlight(q, search));
+                })
               );
               popularPromise.then(function (data) {
                 res = res.concat(data);
@@ -472,6 +526,7 @@ h1 {
               });
             },
             displayKey: 'query',
+            name: 'queries',
             templates: {
               suggestion: function(suggestion) {
                 return suggestion.html;
@@ -479,59 +534,42 @@ h1 {
             }
           }, {
             source: function (q, cb) {
-              if (!q) {
-                cb([]);
-                return;
-              }
               var dataPromise = dataIndex.search(q, Object.assign({}, dataParameters, {
                 hitsPerPage: 20,
                 highlightPreTag: '<span class="highlight">',
                 highlightPostTag: '</span>',
-                attributesToRetrieve: [dataKeys.img, dataKeys.url],
-                attributesToHighlight: [dataKeys.main],
-                attributesToSnippet: [dataKeys.secondary + ':20'],
                 snippetEllipsisText: '...'
               })).then(function (content) {
-                return content.hits.map(function (h) {
-                  return {
-                    url: h[dataKeys.url] || settings.buildUrl(h),
-                    html: '' +
-                      '<span class="suggestion-left">' +
-                      '</span>' +
-                      '<span class="suggestion-right">' +
-                      '  <span class="ellipsis result-main">' +
-                      '  ' + ((!h._highlightResult || !h._highlightResult[dataKeys.main]) ? ('No ' + dataKeys.main) : h._highlightResult[dataKeys.main].value) +
-                      '  </span>' +
-                      '  <span class="ellipsis result-secondary">' +
-                      '  ' + ((!h._snippetResult || !h._snippetResult[dataKeys.secondary]) ? '' : h._snippetResult[dataKeys.secondary].value) +
-                      '  </span>' +
-                      '</span>'
-                  };
-                });
+                return content.hits;
               }).catch(function (error) {
                 console.error(error);
               }).then(cb);
             },
-            displayKey: dataKeys.main,
+            displayKey: settings.key,
+            name: 'results',
             templates: {
               header: '<span class="results-header">Results</span>',
-              suggestion: function(suggestion) {
-                return suggestion.html;
-              }
+              suggestion: settings.template
             }
           }
         ]).on('autocomplete:selected', function(event, suggestion, dataset) {
+          event.preventDefault();
           if (suggestion === undefined) {
-            window.location.href = settings.url + query;
+            changeVal(query);
+            return;
           }
-          window.location.href = suggestion.url;
+          if (suggestion.query) {
+            changeVal(suggestion.query)
+            return;
+          }
+          window.location.href = settings.buildUrl(suggestion);
         });
 
         $back_button.addEventListener('mousedown', onBack);
         $search_input.addEventListener('blur', onBlur);
         $search_input.addEventListener('focus', onFocus);
 
-        load();
+        load('');
       }
       createAutocomplete();
 
