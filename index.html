@@ -629,7 +629,8 @@ h1 {
             return;
           }
           if (suggestion.query) {
-            changeVal(suggestion.query)
+            changeVal(suggestion.query);
+            $search_input.blur();
             return;
           }
           window.location.href = settings.buildUrl(suggestion);
