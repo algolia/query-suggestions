@@ -403,6 +403,9 @@ h1 {
       var MAX_QUERIES_AMOUNT = 8;
       var MIN_QUERIES_AMOUNT = 4;
 
+      var PX_TO_INFINITE_SCROLL = 300;
+      var RESULTS_PER_SEARCH = 20;
+
       var SETTINGS = {
         hackernews: {
           placeholder: 'Search for HackerNews topics',
@@ -492,6 +495,9 @@ h1 {
       var sentEnter = false;
       var inputFocused = false;
       var emptyQuery = true;
+      var storedCb = null;
+      var storedResults = [];
+      var retrievingMoreResults = false;
 
       function createAutocomplete () {
         var recentStore = new RecentStore(index);
@@ -571,6 +577,36 @@ h1 {
           $search_input.focus();
         }
 
+        function addResults () {
+          if (retrievingMoreResults) return;
+          if (storedResults.length + RESULTS_PER_SEARCH > 1000) return;
+          retrievingMoreResults = true;
+          var dataPromise = dataIndex.search(query, Object.assign({}, dataParameters, {
+            hitsPerPage: RESULTS_PER_SEARCH,
+            highlightPreTag: '<span class="highlight">',
+            highlightPostTag: '</span>',
+            snippetEllipsisText: '...',
+            page: storedResults.length / RESULTS_PER_SEARCH
+          })).then(function (content) {
+            return content.hits;
+          }).catch(function (error) {
+            console.error(error);
+          }).then(function (data) {
+            retrievingMoreResults = false;
+            storedResults = storedResults.concat(data);
+            storedCb(storedResults);
+          });
+        }
+
+        function checkScroll () {
+          var scroll = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+          var viewportHeight = window.innerHeight;
+          var height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+          if (scroll + viewportHeight + PX_TO_INFINITE_SCROLL > height) {
+            addResults();
+          }
+        }
+
         $header.style.backgroundColor = settings.background;
         $logo.src = settings.logo;
         $search_input.value = '';
@@ -637,8 +673,9 @@ h1 {
             }
           }, {
             source: function (q, cb) {
+              storedCb = null;
               var dataPromise = dataIndex.search(q, Object.assign({}, dataParameters, {
-                hitsPerPage: 20,
+                hitsPerPage: RESULTS_PER_SEARCH,
                 highlightPreTag: '<span class="highlight">',
                 highlightPostTag: '</span>',
                 snippetEllipsisText: '...'
@@ -646,7 +683,11 @@ h1 {
                 return content.hits;
               }).catch(function (error) {
                 console.error(error);
-              }).then(cb);
+              }).then(function (data) {
+                storedCb = cb;
+                storedResults = data;
+                cb(data);
+              });
             },
             displayKey: settings.key,
             name: 'results',
@@ -679,6 +720,7 @@ h1 {
         $search_input.addEventListener('blur', onBlur);
         $search_input.addEventListener('focus', onFocus);
         $search_input.focus();
+        window.addEventListener('scroll', checkScroll);
 
         load('');
       }
