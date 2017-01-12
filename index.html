@@ -85,11 +85,11 @@ header {
   cursor: pointer;
 }
 
-.input-not-focused #back_button {
+.input-not-focused.empty-query #back_button {
   display: none;
 }
 
-.input-focused #index_selector_wrapper {
+.input-focused #index_selector_wrapper, .not-empty-query #index_selector_wrapper {
   display: none;
 }
 
@@ -120,6 +120,11 @@ header {
   height: 100%;
   width: 24px;
   cursor: pointer;
+}
+
+.empty-query.input-not-focused #input_wrapper {
+  opacity: 0;
+  width: 0;
 }
 
 .empty-query #clear_button {
@@ -489,6 +494,8 @@ h1 {
       var aa = null;
       var query = null;
       var sentEnter = false;
+      var inputFocused = false;
+      var emptyQuery = true;
 
       function createAutocomplete () {
         var recentStore = new RecentStore(index);
@@ -518,6 +525,7 @@ h1 {
         }
 
         function load (query) {
+          $search_input.blur();
           aa.autocomplete.setVal(query);
           $search_input.focus();
           $search_input.blur();
@@ -530,12 +538,14 @@ h1 {
         }
 
         function onFocus () {
+          inputFocused = true;
           $search_wrapper.classList.remove('input-not-focused');
           $search_wrapper.classList.add('input-focused');
           recentStore.store($search_input.value);
         }
 
         function onBlur () {
+          inputFocused = false;
           $search_wrapper.classList.remove('input-focused');
           $search_wrapper.classList.add('input-not-focused');
         }
@@ -548,11 +558,21 @@ h1 {
           changeVal('');
         }
 
-        function onSearch () {
+        function onEnter () {
           sentEnter = true;
           $search_input.blur();
           $search_input.focus();
           $search_input.blur();
+        }
+
+        function onSearchDown () {
+          if (!inputFocused) return;
+          onEnter();
+        }
+
+        function onSearchUp () {
+          if (inputFocused || !emptyQuery) return;
+          $search_input.focus();
         }
 
         $header.style.backgroundColor = settings.background;
@@ -568,9 +588,11 @@ h1 {
               if (q) {
                 $search_wrapper.classList.remove('empty-query');
                 $search_wrapper.classList.add('not-empty-query');
+                emptyQuery = false;
               } else {
                 $search_wrapper.classList.remove('not-empty-query');
                 $search_wrapper.classList.add('empty-query');
+                emptyQuery = true;
               }
 
               if (sentEnter) {
@@ -649,14 +671,16 @@ h1 {
         });
 
         $back_button.addEventListener('mousedown', onBack);
-        $search_button.addEventListener('mousedown', onSearch);
+        $search_button.addEventListener('mousedown', onSearchDown);
+        $search_button.addEventListener('mouseup', onSearchUp);
         $clear_button.addEventListener('mouseup', onClear);
         $search_input.addEventListener('keyup', function (e) {
           if (e.keyCode !== 13) return;
-          onSearch();
+          onEnter();
         });
         $search_input.addEventListener('blur', onBlur);
         $search_input.addEventListener('focus', onFocus);
+        $search_input.focus();
 
         load('');
       }
