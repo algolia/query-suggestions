@@ -392,6 +392,13 @@ h1 {
           };
         }
 
+        function onFocus () {
+          recentStore.store($search_input.value);
+        }
+
+        function onBlur () {
+        }
+
         $header.style.backgroundColor = settings.background;
         $logo.src = settings.logo;
         $search_input.value = '';
@@ -482,10 +489,12 @@ h1 {
           }
           window.location.href = suggestion.url;
         });
+
+        $search_input.addEventListener('blur', onBlur);
+        $search_input.addEventListener('focus', onFocus);
+
         $search_input.focus();
-        $search_input.addEventListener('blur', function () {
-          recentStore.store($search_input.value);
-        });
+        $search_input.blur();
       }
       createAutocomplete();
 
