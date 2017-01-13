@@ -28,9 +28,19 @@ a {
   text-decoration: none;
 }
 
-header {
+#search_wrapper {
+  padding-top: 48px;
+  position: relative;
+}
+
+#header {
+  z-index: 101;
   overflow: hidden;
   color: white;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
 }
 
 #header_left {
@@ -213,6 +223,16 @@ h1 {
   float: left;
 }
 
+.suggestion-image {
+  width: 36px;
+  height: 36px;
+  margin: 4px;
+  margin-right: 16px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+}
+
 .suggestion-right > span {
   display: block;
   white-space: nowrap;
@@ -254,8 +274,8 @@ h1 {
           <div id="index_selector_wrapper">
             <img id="logo" />
             <select id="index_selector">
-              <option value="hackernews" selected>HackerNews</option>
-              <option value="instant_search">Instant Search demo</option>
+              <option value="hackernews">HackerNews</option>
+              <option value="instant_search" selected>Instant Search demo</option>
             </select>
           </div>
           <div id="back_button">
@@ -309,10 +329,10 @@ h1 {
             'amazon'
           ],
           instant_search: [
-            'iphone 7',
             'iphone 6s',
-            'iphone 6',
-            'iphone'
+            'iphone',
+            'macbook pro',
+            'gopro'
           ]
         };
         for (var key in DEFAULT_RECENT_SEARCHES) {
@@ -464,6 +484,8 @@ h1 {
           template: function (h) {
             return '' +
             '<span class="suggestion-left">' +
+            '  <div class="suggestion-image" style="' + (h.image ? ('background-image: url(\'' + h.image + '\')') : '') + '">' +
+            '  </div>' +
             '</span>' +
             '<span class="suggestion-right">' +
             '  <span class="ellipsis result-main">' +
@@ -500,6 +522,7 @@ h1 {
       var storedCb = null;
       var storedResults = [];
       var retrievingMoreResults = false;
+      var oldScroll = 0;
 
       function createAutocomplete () {
         var recentStore = new RecentStore(index);
@@ -604,6 +627,7 @@ h1 {
           var scroll = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
           var viewportHeight = window.innerHeight;
           var height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+          $header.style.position = scroll < oldScroll ? 'fixed' : 'absolute';
           if (scroll > PX_TO_REMOVE_QUERIES) {
             onBlur();
             var newHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
@@ -613,6 +637,7 @@ h1 {
           if (scroll + viewportHeight + PX_TO_INFINITE_SCROLL > height) {
             addResults();
           }
+          oldScroll = scroll;
         }
 
         $header.style.backgroundColor = settings.background;
