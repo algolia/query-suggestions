@@ -637,7 +637,9 @@ h1 {
           var scroll = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
           var viewportHeight = window.innerHeight;
           var height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
-          $header.style.position = scroll < oldScroll ? 'fixed' : 'absolute';
+          if (Math.abs(scroll - oldScroll) > 1) {
+            $header.style.position = scroll < oldScroll ? 'fixed' : 'absolute';
+          }
           if (scroll > PX_TO_REMOVE_QUERIES) {
             onBlur();
             var newHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
