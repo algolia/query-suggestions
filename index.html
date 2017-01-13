@@ -365,6 +365,7 @@ h1 {
         RecentStore.prototype.store = function store (query) {
           if (!query) return;
           if (query.length < KEEP_SIZE) return;
+          query = query.toLowerCase();
           var first = this.data[0];
           if (first.query.indexOf(query) !== -1) return;
           if (query.indexOf(first.query) !== -1) this.data.shift();
