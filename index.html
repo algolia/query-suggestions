@@ -606,18 +606,22 @@ h1 {
         function addResults () {
           if (retrievingMoreResults) return;
           if (storedResults.length + RESULTS_PER_SEARCH > 1000) return;
+          if (reachedLimit) return;
           retrievingMoreResults = true;
           var dataPromise = dataIndex.search(query, Object.assign({}, dataParameters, {
             hitsPerPage: RESULTS_PER_SEARCH,
             highlightPreTag: '<span class="highlight">',
             highlightPostTag: '</span>',
             snippetEllipsisText: '...',
-            page: storedResults.length / RESULTS_PER_SEARCH
+            page: Math.floor(storedResults.length / RESULTS_PER_SEARCH)
           })).then(function (content) {
             return content.hits;
           }).catch(function (error) {
             console.error(error);
           }).then(function (data) {
+            if (data.length < RESULTS_PER_SEARCH) {
+              reachedLimit = true;
+            }
             retrievingMoreResults = false;
             storedResults = storedResults.concat(data);
             storedCb(storedResults);
@@ -635,7 +639,7 @@ h1 {
             document.body.scrollTop = document.documentElement.scrollTop = scroll - (height - newHeight);
             $search_input.blur();
           }
-          if (scroll + viewportHeight + PX_TO_INFINITE_SCROLL > height) {
+          if ((query || !inputFocused) && scroll + viewportHeight + PX_TO_INFINITE_SCROLL > height) {
             addResults();
           }
           oldScroll = scroll;
@@ -720,6 +724,7 @@ h1 {
               }).then(function (data) {
                 storedCb = cb;
                 storedResults = data;
+                reachedLimit = data.length < RESULTS_PER_SEARCH;
                 cb(data);
               });
             },
