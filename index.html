@@ -179,13 +179,13 @@ h1 {
 
 .algolia-autocomplete {
   width: 100% !important;
+  top: 48px !important;
   left: 0 !important;
 }
 
 .aa-dropdown-menu {
   position: relative;
   width: 100%;
-  margin-top: 9px;
   background: #ffffff;
 }
 
@@ -637,8 +637,12 @@ h1 {
           var scroll = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
           var viewportHeight = window.innerHeight;
           var height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
-          if (Math.abs(scroll - oldScroll) > 1) {
-            $header.style.position = scroll < oldScroll ? 'fixed' : 'absolute';
+          if (Math.abs(scroll - oldScroll) > 2) {
+            if (scroll < 0) {
+              $header.style.position = 'absolute';
+            } else {
+              $header.style.position = scroll < oldScroll ? 'fixed' : 'absolute';
+            }
           }
           if (scroll > PX_TO_REMOVE_QUERIES) {
             onBlur();
