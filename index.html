@@ -300,8 +300,10 @@ h1 {
       </header>
     </div>
 
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
     <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/autocomplete.js/0.24/autocomplete.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery/3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/autocomplete.js/0.24/autocomplete.jquery.min.js"></script>
     <script type="text/javascript">
       /* Helper methods */
       function escapeHtml (text) {
@@ -431,7 +433,7 @@ h1 {
       var MIN_QUERIES_AMOUNT = 4;
 
       var PX_TO_INFINITE_SCROLL = 300;
-      var PX_TO_REMOVE_QUERIES = 300;
+      var PX_TO_REMOVE_QUERIES = 1000;
       var RESULTS_PER_SEARCH = 50;
 
       var SETTINGS = {
@@ -529,6 +531,7 @@ h1 {
       var storedResults = [];
       var retrievingMoreResults = false;
       var oldScroll = 0;
+      var oldViewportHeight = 0;
 
       function createAutocomplete () {
         var recentStore = new RecentStore(index);
@@ -559,13 +562,13 @@ h1 {
 
         function load (query) {
           $search_input.blur();
-          aa.autocomplete.setVal(query);
+          aa.val(query);
           $search_input.focus();
           $search_input.blur();
         }
 
         function changeVal (query) {
-          aa.autocomplete.setVal(query);
+          aa.val(query);
           $search_input.blur();
           $search_input.focus();
         }
@@ -637,6 +640,16 @@ h1 {
           var scroll = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
           var viewportHeight = window.innerHeight;
           var height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+          console.log(oldScroll, scroll);
+
+          if (scroll < 0) {
+            return;
+          }
+
+          if (Math.abs(scroll - oldScroll) < 50) {
+            return;
+          }
+
           if (Math.abs(scroll - oldScroll) > 2) {
             if (scroll < 0) {
               $header.style.position = 'absolute';
@@ -653,6 +666,7 @@ h1 {
           if ((query || !inputFocused) && scroll + viewportHeight + PX_TO_INFINITE_SCROLL > height) {
             addResults();
           }
+          oldViewportHeight = viewportHeight;
           oldScroll = scroll;
         }
 
@@ -661,7 +675,7 @@ h1 {
         $search_input.value = '';
         $search_input.placeholder = settings.placeholder;
 
-        aa = autocomplete('#search_input', { debug: true, hint: false, appendTo: '#search_wrapper', openOnFocus: true, minLength: 0 }, [
+        aa = $('#search_input').autocomplete({ debug: true, hint: false, appendTo: '#search_wrapper', openOnFocus: true, minLength: 0 }, [
           {
             source: function (q, cb) {
               query = q;
@@ -758,6 +772,8 @@ h1 {
           }
           window.location.href = settings.buildUrl(suggestion);
         });
+
+        aa.eq(0).data('aaAutocomplete').dropdown._redraw = function () {};
 
         $back_button.addEventListener('mousedown', onBack);
         $search_button.addEventListener('mousedown', onSearchDown);
