@@ -545,6 +545,7 @@ h1 {
       var storedCb = null;
       var storedResults = [];
       var retrievingMoreResults = false;
+      var queriesRemoved = false;
       var oldScroll = 0;
       var oldViewportHeight = 0;
 
@@ -661,11 +662,12 @@ h1 {
 
           $header.style.position = scroll < oldScroll ? 'fixed' : 'absolute';
 
-          if (scroll > PX_TO_REMOVE_QUERIES) {
+          if (!queriesRemoved && scroll > PX_TO_REMOVE_QUERIES) {
             onBlur();
             var newHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
             document.body.scrollTop = document.documentElement.scrollTop = scroll - (height - newHeight);
             $search_input.blur();
+            queriesRemoved = true;
           }
 
           if ((query || !inputFocused) && scroll + viewportHeight + PX_TO_INFINITE_SCROLL > height) {
@@ -686,6 +688,7 @@ h1 {
             source: function (q, cb) {
               query = q;
 
+              queriesRemoved = false;
               document.body.scrollTop = document.documentElement.scrollTop = 0;
 
               if (q) {
