@@ -318,6 +318,21 @@ h1 {
       function escapeRegExp (str) {
         return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
       }
+
+      function debounce(func, wait, immediate) {
+        var timeout;
+        return function() {
+          var context = this, args = arguments;
+          var later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+          };
+          var callNow = immediate && !timeout;
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+          if (callNow) func.apply(context, args);
+        };
+      };
     </script>
     <script type="text/javascript">
       /* RecentStore */
@@ -786,7 +801,7 @@ h1 {
         $search_input.addEventListener('blur', onBlur);
         $search_input.addEventListener('focus', onFocus);
         $search_input.focus();
-        window.addEventListener('scroll', onScroll);
+        window.addEventListener('scroll', debounce(onScroll, 300));
 
         load('');
       }
