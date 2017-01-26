@@ -1,3 +1,13 @@
+<a name="1.2.1"></a>
+## [1.2.1](https://github.com/algolia/algolia-popular-queries/compare/v1.2.0...v1.2.1) (2017-01-26)
+
+
+### Bug Fixes
+
+* **SearchString:** fix multiline regexp ([43b185f](https://github.com/algolia/algolia-popular-queries/commit/43b185f))
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/algolia/algolia-popular-queries/compare/v1.1.0...v1.2.0) (2016-12-22)
 
