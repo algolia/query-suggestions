@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Algolia Search for Popular Searches test</title>
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <style>
+*, *:after, *:before {
+  font-family: Open Sans, sans-serif;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #f8f8f8;
+}
+
+body {
+  overflow-y: scroll; /* has to be scroll, not auto */
+  -webkit-overflow-scrolling: touch;
+}
+
+.fa:before {
+  font-family: FontAwesome, Open Sans, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#search_wrapper {
+  padding-top: 48px;
+  position: relative;
+}
+
+#header {
+  z-index: 101;
+  overflow: hidden;
+  color: white;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+#header_left {
+  width: 48px;
+  height: 48px;
+  padding: 8px;
+  float: left;
+}
+
+#index_selector_wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 3px;
+}
+
+#logo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 3px;
+}
+
+#index_selector {
+  position: absolute;
+  top: 2.5%;
+  left: 2.5%;
+  width: 95%;
+  height: 95%;
+  z-index: 0;
+  outline: none;
+  border-radius: 10px;
+}
+
+#back_button {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  padding-top: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#search_button {
+  float: right;
+  height: 48px;
+  width: 48px;
+  padding: 10px 16px 10px 8px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.input-not-focused.empty-query #back_button {
+  display: none;
+}
+
+.input-focused #index_selector_wrapper, .not-empty-query #index_selector_wrapper {
+  display: none;
+}
+
+#input_wrapper {
+  margin-left: 56px;
+  margin-right: 48px;
+  padding: 8px;
+  position: relative;
+}
+
+#search_input {
+  width: 100%;
+  padding: 4px;
+  padding-right: 24px;
+  background: transparent;
+  color: inherit;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid white;
+  border-radius: 0;
+  font-size: 16px;
+}
+
+#clear_button {
+  position: absolute;
+  right: 12px;
+  bottom: 0px;
+  height: 100%;
+  width: 24px;
+  cursor: pointer;
+}
+
+.empty-query.input-not-focused #input_wrapper {
+  opacity: 0;
+  width: 0;
+}
+
+.empty-query #clear_button {
+  display: none;
+}
+
+.clear-button-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjU2IDI1NiIgaGVpZ2h0PSIyNTZweCIgaWQ9IkxheWVyXzEiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDI1NiAyNTYiIHdpZHRoPSIyNTZweCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PHBhdGggZD0iTTEzNy4wNTEsMTI4bDc1LjQ3NS03NS40NzVjMi41LTIuNSwyLjUtNi41NTEsMC05LjA1MXMtNi41NTEtMi41LTkuMDUxLDBMMTI4LDExOC45NDlMNTIuNTI1LDQzLjQ3NSAgYy0yLjUtMi41LTYuNTUxLTIuNS05LjA1MSwwcy0yLjUsNi41NTEsMCw5LjA1MUwxMTguOTQ5LDEyOGwtNzUuNDc1LDc1LjQ3NWMtMi41LDIuNS0yLjUsNi41NTEsMCw5LjA1MSAgYzEuMjUsMS4yNSwyLjg4OCwxLjg3NSw0LjUyNSwxLjg3NXMzLjI3NS0wLjYyNSw0LjUyNS0xLjg3NUwxMjgsMTM3LjA1MWw3NS40NzUsNzUuNDc1YzEuMjUsMS4yNSwyLjg4OCwxLjg3NSw0LjUyNSwxLjg3NSAgczMuMjc1LTAuNjI1LDQuNTI1LTEuODc1YzIuNS0yLjUsMi41LTYuNTUxLDAtOS4wNTFMMTM3LjA1MSwxMjh6IiBzdHlsZT0iZmlsbDogd2hpdGU7Ii8+PC9zdmc+);
+  background-size: 16px 16px;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+#search_input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+  color: white;
+  opacity: 0.8;
+}
+#search_input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color: white;
+  opacity: 0.8;
+}
+#search_input::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color: white;
+  opacity: 0.8;
+}
+#search_input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: white;
+  opacity: 0.8;
+}
+
+h1 {
+  text-align: center;
+}
+
+.algolia-autocomplete {
+  width: 100% !important;
+  top: 48px !important;
+  left: 0 !important;
+}
+
+.aa-dropdown-menu {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+}
+
+.aa-dataset-queries {
+  border-bottom: 1px solid #ccc;
+}
+
+.aa-suggestion {
+  padding: 8px 8px;
+}
+
+.aa-dataset-results .aa-suggestion {
+  border-bottom: 1px solid #ebebeb;
+}
+
+.input-not-focused .aa-dataset-queries, .input-not-focused .results-header {
+  display: none;
+}
+
+.input-focused.empty-query .aa-dataset-results, .input-focused.empty-query .results-header {
+  display: none;
+}
+
+.aa-suggestion.aa-cursor {
+  background: #f8f8f8;
+}
+
+.suggestion-left i {
+  width: 48px;
+  display: inline-block;
+  text-align: center;
+}
+
+.highlight {
+  font-weight: bold;
+}
+
+.suggestion-left {
+  display: block;
+  float: left;
+}
+
+.suggestion-image {
+  width: 36px;
+  height: 36px;
+  margin: 4px;
+  margin-right: 16px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+}
+
+.ellipsis {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.results-header {
+  display: block;
+  padding: 4px 16px;
+  font-size: 0.9em;
+  background: #e8e8e8;
+  width: 100%;
+}
+
+.aa-without-queries .results-header {
+  display: none;
+}
+
+.result-secondary {
+  color: #44484f;
+  font-size: 0.8em;
+}
+
+.separator {
+  color: #e0e0e0;
+}
+
+.aa-footer {
+  font-size: 0.95em;
+}
+    </style>
+  </head>
+  <body>
+
+    <div id="search_wrapper">
+      <header id="header">
+        <div id="header_left">
+          <div id="index_selector_wrapper">
+            <img id="logo" />
+            <select id="index_selector">
+              <option value="hackernews">HackerNews</option>
+              <option value="instant_search" selected>Instant Search demo</option>
+            </select>
+          </div>
+          <div id="back_button">
+            <i class="fa fa-caret-left"></i> Back
+          </div>
+        </div>
+        <div id="search_button">
+          <i class="fa fa-search"></i>
+        </div>
+
+        <div id="input_wrapper">
+          <input id="search_input" type="text" autocomplete="off" placeholder="" />
+          <div id="clear_button">
+            <i class="clear-button-icon"></i>
+          </div>
+        </div>
+      </header>
+    </div>
+
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery/3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/autocomplete.js/0.24/autocomplete.jquery.min.js"></script>
+    <script type="text/javascript">
+      /* Helper methods */
+      function escapeHtml (text) {
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function escapeRegExp (str) {
+        return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+      }
+
+      function debounce(func, wait, immediate) {
+        var timeout;
+        return function() {
+          var context = this, args = arguments;
+          var later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+          };
+          var callNow = immediate && !timeout;
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+          if (callNow) func.apply(context, args);
+        };
+      };
+    </script>
+    <script type="text/javascript">
+      /* RecentStore */
+
+      (function () {
+        var STORE_KEY = 'recentStore';
+        var KEEP_SIZE = 3;
+        var KEEP_DAYS = 30;
+        var KEEP_AMOUNT = 100;
+
+        var DEFAULT_RECENT_SEARCHES = {
+          hackernews: [
+            'apple',
+            'iphone 7',
+            'facebook',
+            'amazon'
+          ],
+          instant_search: [
+            'iphone 6s',
+            'iphone',
+            'macbook pro',
+            'gopro'
+          ]
+        };
+        for (var key in DEFAULT_RECENT_SEARCHES) {
+          if (!DEFAULT_RECENT_SEARCHES.hasOwnProperty(key)) return;
+          DEFAULT_RECENT_SEARCHES[key] = DEFAULT_RECENT_SEARCHES[key].map(function (q) {
+            return {
+              query: q,
+              updated_at: new Date()
+            };
+          });
+        }
+
+        window.RecentStore = function RecentStore (key) {
+          this.key = key;
+          this.load();
+        }
+
+        // Recent searches
+        RecentStore.prototype.search = function search (query, amount) {
+          var qReg = RecentStore.queryRegExp(query);
+          return this.data
+            .filter(function (qObj) {
+              var qQuery = qObj.query;
+              return qQuery.match(qReg) && qQuery !== query;
+            })
+            .slice(0, amount)
+            .map(function (qObj) { return qObj.query; })
+        };
+
+        RecentStore.prototype.store = function store (query) {
+          if (!query) return;
+          if (query.length < KEEP_SIZE) return;
+          query = query.toLowerCase();
+          var first = this.data[0];
+          if (first.query.indexOf(query) !== -1) return;
+          if (query.indexOf(first.query) !== -1) this.data.shift();
+          for (var i = 0; i < this.data.length; ++i) { // Duplicates
+            if (this.data[i].query !== query) continue;
+            this.data.splice(i, 1);
+            break;
+          }
+          this.data.unshift({ query: query, updated_at: new Date() });
+          this.save();
+        };
+
+        // Browser storage
+        RecentStore.prototype._mainStore = function _mainStore () {
+          if (!window.localStorage) return DEFAULT_RECENT_SEARCHES;
+          if (!window.localStorage[STORE_KEY]) return DEFAULT_RECENT_SEARCHES;
+          return JSON.parse(window.localStorage[STORE_KEY]);
+        };
+
+        RecentStore.prototype.load = function load () {
+          this.data = this._mainStore()[this.key].map(function (qObj) {
+            return {
+              query: qObj.query,
+              updated_at: new Date(qObj.updated_at)
+            };
+          });
+        };
+
+        RecentStore.prototype.clean = function clean () {
+          var timeLimit = new Date(new Date() - KEEP_DAYS);
+          this.data
+            .filter(function (qObj) { return qObj.updated_at > timeLimit; })
+            .slice(0, KEEP_AMOUNT);
+        };
+
+        RecentStore.prototype.save = function save () {
+          this.clean();
+          if (!window.localStorage) return;
+          var mainStore = this._mainStore();
+          mainStore[this.key] = this.data;
+          window.localStorage[STORE_KEY] = JSON.stringify(mainStore);
+        };
+
+        RecentStore.queryRegExp = function queryRegExp (query) {
+          return new RegExp('(^|\\s)' + escapeRegExp(query), 'g');
+        };
+
+        RecentStore.highlight = function highlight (query, search) {
+          return search.replace(
+            RecentStore.queryRegExp(query),
+            '$1' + '<span class="highlight">' + query + '</span>'
+          );
+        };
+      }());
+    </script>
+    <script>
+      var MAX_QUERIES_AMOUNT = 8;
+      var MIN_QUERIES_AMOUNT = 4;
+
+      var PX_TO_INFINITE_SCROLL = 300;
+      var PX_TO_REMOVE_QUERIES = 300;
+      var RESULTS_PER_SEARCH = 50;
+
+      var SETTINGS = {
+        hackernews: {
+          placeholder: 'Search for HackerNews topics',
+          url: 'https://hn.algolia.com/?q=',
+          logo: 'https://hn.algolia.com/assets/logo-hn-search.png',
+          index: algoliasearch('UJ5WYC0L7X', '08240194d5ef567a9f14e0f066bace0c').initIndex('Item_production'),
+          background: '#ff742b',
+          key: 'title',
+          parameters: {
+            tagFilters: ['story'],
+            attributesToSnippet: ['story_text:20']
+          },
+          template: function (h) {
+            return '' +
+            '<span class="suggestion-left">' +
+            '</span>' +
+            '<span class="suggestion-right">' +
+            '  <a href="' + h.url + '" class="ellipsis result-main">' +
+            '  ' + ((!h._highlightResult || !h._highlightResult.title) ? ('No title') : h._highlightResult.title.value) +
+            '  </a>' +
+            '  <span class="ellipsis result-secondary">' +
+            '    <a href="https://news.ycombinator.com/item?id=' + h.objectID + '">' +
+            '      ' + h.points + ' points' +
+            '    </a>' +
+            '    <span class="separator">|</span> ' +
+            '    <a href="https://news.ycombinator.com/user?id=' + h.author + '">' +
+            '  ' + h.author +
+            '    </a>' +
+            '    <span class="separator">|</span> ' +
+            '    <a href="https://news.ycombinator.com/item?id=' + h.objectID + '">' +
+            '      ' + h.num_comments + ' comments' +
+            '    </a>' +
+            '    <span class="separator">|</span> ' +
+            '    <a href="' + h.url + '">' +
+            '      ' + h.url +
+            '    </a>' +
+            '  </span>' +
+            '</span>';
+          },
+          buildUrl: function (h) {
+            return 'https://news.ycombinator.com/item?id=' + h.objectID;
+          }
+        },
+        instant_search: {
+          placeholder: 'Search for products suggestions',
+          url: 'https://demos.algolia.com/instant-search-demo/?q=',
+          logo: 'https://d13yacurqjgara.cloudfront.net/users/1090953/avatars/small/3a0f064859092a0e82bedddcee24a4a8.png?1481542786',
+          index: algoliasearch('latency', '6be0576ff61c053d5f9a3225e2a90f76').initIndex('instant_search'),
+          background: '#0a1724',
+          key: 'name',
+          parameters: {
+            attributesToSnippet: ['description:20']
+          },
+          template: function (h) {
+            return '' +
+            '<span class="suggestion-left">' +
+            '  <div class="suggestion-image" style="' + (h.image ? ('background-image: url(\'' + h.image + '\')') : '') + '">' +
+            '  </div>' +
+            '</span>' +
+            '<span class="suggestion-right">' +
+            '  <span class="ellipsis result-main">' +
+            '  ' + ((!h._highlightResult || !h._highlightResult.name) ? ('No name') : h._highlightResult.name.value) +
+            '  </span>' +
+            '  <span class="ellipsis result-secondary">' +
+            '  ' + ((!h._snippetResult || !h._snippetResult.description) ? '' : h._snippetResult.description.value) +
+            '  </span>' +
+            '</span>';
+          },
+          buildUrl: function (h) {
+            return h.url;
+          }
+        }
+      };
+
+      var $search_wrapper = document.getElementById('search_wrapper');
+      var $header = document.getElementById('header');
+      var $index_selector_wrapper = document.getElementById('index_selector_wrapper');
+      var $index_selector = document.getElementById('index_selector');
+      var $logo = document.getElementById('logo');
+      var $back_button = document.getElementById('back_button');
+      var $search_button = document.getElementById('search_button');
+      var $search_input = document.getElementById('search_input');
+      var $clear_button = document.getElementById('clear_button');
+
+      var index = $index_selector.value;
+      var client = algoliasearch('OMDED4ZQES', '24c5f81bb301609f7dced52863634ec6')
+      var aa = null;
+      var query = null;
+      var sentEnter = false;
+      var inputFocused = false;
+      var emptyQuery = true;
+      var storedCb = null;
+      var storedResults = [];
+      var retrievingMoreResults = false;
+      var queriesRemoved = false;
+      var oldScroll = 0;
+      var oldViewportHeight = 0;
+
+      function createAutocomplete () {
+        var recentStore = new RecentStore(index);
+        var popularIndex = client.initIndex(index + '_popular_searches');
+        var settings = SETTINGS[index];
+        var dataIndex = settings.index;
+        var dataParameters = settings.parameters;
+
+        function buildEntry (suggestionType, query, content) {
+          var icon = '';
+          if (suggestionType === 'recent') icon = 'clock-o';
+          if (suggestionType === 'popular') icon = 'search';
+          return {
+            query: query,
+            html: '' +
+              '<span class="suggestion">' +
+              '  <span class="suggestion-left">' +
+              '    <i class="fa fa-' + icon + '"></i>' +
+              '  </span>' +
+              '  <span class="suggestion-right">' +
+              '    <span class="suggested-query suggested-' + suggestionType + '">' +
+              '      ' + content +
+              '    </span>' +
+              '  </span>' +
+              '</span>'
+          };
+        }
+
+        function load (query) {
+          $search_input.blur();
+          aa.val(query);
+          $search_input.focus();
+          $search_input.blur();
+        }
+
+        function changeVal (query) {
+          aa.val(query);
+          $search_input.blur();
+          $search_input.focus();
+        }
+
+        function onFocus () {
+          inputFocused = true;
+          $search_wrapper.classList.remove('input-not-focused');
+          $search_wrapper.classList.add('input-focused');
+          recentStore.store($search_input.value);
+        }
+
+        function onBlur () {
+          inputFocused = false;
+          $search_wrapper.classList.remove('input-focused');
+          $search_wrapper.classList.add('input-not-focused');
+        }
+
+        function onBack () {
+          load('');
+        }
+
+        function onClear () {
+          changeVal('');
+        }
+
+        function onEnter () {
+          sentEnter = true;
+          $search_input.blur();
+          $search_input.focus();
+          $search_input.blur();
+        }
+
+        function onSearchDown () {
+          if (!inputFocused) return;
+          onEnter();
+        }
+
+        function onSearchUp () {
+          if (inputFocused || !emptyQuery) return;
+          $search_input.focus();
+        }
+
+        function addResults () {
+          if (retrievingMoreResults) return;
+          if (storedResults.length + RESULTS_PER_SEARCH > 1000) return;
+          if (reachedLimit) return;
+          retrievingMoreResults = true;
+          var dataPromise = dataIndex.search(query, Object.assign({}, dataParameters, {
+            hitsPerPage: RESULTS_PER_SEARCH,
+            highlightPreTag: '<span class="highlight">',
+            highlightPostTag: '</span>',
+            snippetEllipsisText: '...',
+            page: Math.floor(storedResults.length / RESULTS_PER_SEARCH)
+          })).then(function (content) {
+            return content.hits;
+          }).catch(function (error) {
+            console.error(error);
+          }).then(function (data) {
+            if (data.length < RESULTS_PER_SEARCH) {
+              reachedLimit = true;
+            }
+            retrievingMoreResults = false;
+            storedResults = storedResults.concat(data);
+            storedCb(storedResults);
+          });
+        }
+
+        function onScroll () {
+          var scroll = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+          var viewportHeight = window.innerHeight;
+          var height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+
+          if (scroll < 0) return;
+          if (Math.abs(scroll - oldScroll) < 50) return;
+
+          $header.style.position = scroll < oldScroll ? 'fixed' : 'absolute';
+
+          if (!queriesRemoved && scroll > PX_TO_REMOVE_QUERIES) {
+            onBlur();
+            var newHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+            document.body.scrollTop = document.documentElement.scrollTop = scroll - (height - newHeight);
+            $search_input.blur();
+            queriesRemoved = true;
+          }
+
+          if ((query || !inputFocused) && scroll + viewportHeight + PX_TO_INFINITE_SCROLL > height) {
+            addResults();
+          }
+
+          oldViewportHeight = viewportHeight;
+          oldScroll = scroll;
+        }
+
+        $header.style.backgroundColor = settings.background;
+        $logo.src = settings.logo;
+        $search_input.value = '';
+        $search_input.placeholder = settings.placeholder;
+
+        aa = $('#search_input').autocomplete({ debug: true, hint: false, appendTo: '#search_wrapper', openOnFocus: true, minLength: 0 }, [
+          {
+            source: function (q, cb) {
+              query = q;
+
+              queriesRemoved = false;
+              document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+              if (q) {
+                $search_wrapper.classList.remove('empty-query');
+                $search_wrapper.classList.add('not-empty-query');
+                emptyQuery = false;
+              } else {
+                $search_wrapper.classList.remove('not-empty-query');
+                $search_wrapper.classList.add('empty-query');
+                emptyQuery = true;
+              }
+
+              if (sentEnter) {
+                cb([]);
+                sentEnter = false;
+                return;
+              }
+
+              var currAmount = q ? MIN_QUERIES_AMOUNT : MAX_QUERIES_AMOUNT;
+
+              var res = [];
+              var recents = recentStore.search(q, currAmount);
+
+              var popularPromise = popularIndex.search(q, {
+                hitsPerPage: currAmount + 1,
+                highlightPreTag: '<span class="highlight">',
+                highlightPostTag: '</span>'
+              }).then(function (content) {
+                return content.hits.filter(function (h) {
+                  return recents.indexOf(h.query) === -1 && h.query !== q;
+                }).map(function (h) {
+                  return buildEntry('popular', h.query, h._highlightResult.query.value);
+                }).slice(0, currAmount - recents.length);
+              }).catch(function (error) {
+                console.error(error);
+              });
+
+              res = res.concat(
+                recents.map(function (search) {
+                  return buildEntry('recent', search, RecentStore.highlight(q, search));
+                })
+              );
+              popularPromise.then(function (data) {
+                res = res.concat(data);
+                cb(res);
+              });
+            },
+            displayKey: 'query',
+            name: 'queries',
+            templates: {
+              suggestion: function(suggestion) {
+                return suggestion.html;
+              }
+            }
+          }, {
+            source: function (q, cb) {
+              storedCb = null;
+              var dataPromise = dataIndex.search(q, Object.assign({}, dataParameters, {
+                hitsPerPage: RESULTS_PER_SEARCH,
+                highlightPreTag: '<span class="highlight">',
+                highlightPostTag: '</span>',
+                snippetEllipsisText: '...'
+              })).then(function (content) {
+                return content.hits;
+              }).catch(function (error) {
+                console.error(error);
+              }).then(function (data) {
+                storedCb = cb;
+                storedResults = data;
+                reachedLimit = data.length < RESULTS_PER_SEARCH;
+                cb(data);
+              });
+            },
+            displayKey: settings.key,
+            name: 'results',
+            templates: {
+              header: '<span class="results-header">Results</span>',
+              suggestion: settings.template
+            }
+          }
+        ]).on('autocomplete:selected', function(event, suggestion, dataset) {
+          event.preventDefault();
+          if (suggestion === undefined) {
+            return;
+          }
+          if (suggestion.query) {
+            changeVal(suggestion.query);
+            $search_input.blur();
+            return;
+          }
+          window.location.href = settings.buildUrl(suggestion);
+        });
+
+        aa.eq(0).data('aaAutocomplete').dropdown._redraw = function () {};
+
+        $back_button.addEventListener('mousedown', onBack);
+        $search_button.addEventListener('mousedown', onSearchDown);
+        $search_button.addEventListener('mouseup', onSearchUp);
+        $clear_button.addEventListener('mouseup', onClear);
+        $search_input.addEventListener('keyup', function (e) {
+          if (e.keyCode !== 13) return;
+          onEnter();
+        });
+        $search_input.addEventListener('blur', onBlur);
+        $search_input.addEventListener('focus', onFocus);
+        $search_input.focus();
+        window.addEventListener('scroll', debounce(onScroll, 300));
+
+        load('');
+      }
+      createAutocomplete();
+
+      $index_selector.addEventListener('change', function () {
+        index = $index_selector.value;
+        aa.autocomplete.destroy();
+        createAutocomplete();
+      });
+    </script>
+  </body>
+</html>
