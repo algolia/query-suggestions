@@ -15,8 +15,11 @@
 }
 
 html, body {
+  width: 100%;
   height: 100%;
   overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -31,6 +34,7 @@ body {
 .blocks-wrapper {
   position: absolute;
   top: 50%;
+  left: 0;
   width: 66%;
   margin: 0 17%;
   height: 300px;
@@ -68,12 +72,30 @@ a {
 @media only screen and (max-width: 780px) {
   .blocks-wrapper {
     height: 600px;
+    width: 90%;
+    margin: 0 5%;
     margin-top: -300px;
   }
 
   .block {
     width: 100%;
     height: 268px;
+    margin: 0;
+    margin-bottom: 32px;
+  }
+}
+
+@media only screen and (min-width: 780px) and (max-width: 1260px) {
+  .blocks-wrapper {
+    width: 90%;
+    margin: 0 5%;
+    margin-top: -150px;
+  }
+
+  .block {
+    width: 45%;
+    height: 268px;
+    margin: 2.5%;
     margin-bottom: 32px;
   }
 }
