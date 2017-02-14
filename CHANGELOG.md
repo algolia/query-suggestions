@@ -1,3 +1,14 @@
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/algolia/algolia-popular-queries/compare/v1.2.1...v1.3.0) (2017-02-14)
+
+
+### Features
+
+* **exclude:** add exclude exclusion array w/ Regexes ([6d5ad1c](https://github.com/algolia/algolia-popular-queries/commit/6d5ad1c))
+* **search_string:** accept numbers too (iphone 7, windows 10) ([1c75caa](https://github.com/algolia/algolia-popular-queries/commit/1c75caa))
+
+
+
 <a name="1.2.1"></a>
 ## [1.2.1](https://github.com/algolia/algolia-popular-queries/compare/v1.2.0...v1.2.1) (2017-01-26)
 
