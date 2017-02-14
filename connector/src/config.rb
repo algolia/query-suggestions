@@ -13,3 +13,6 @@ CONFIG['min_letters'] = 3 if CONFIG['min_letters'].blank?
 CONFIG['min_letters'] = CONFIG['min_letters'].to_i
 
 CONFIG['analytics_tags'] ||= ''
+
+CONFIG['exclude'] ||= []
+CONFIG['exclude'].map! { |r| Regexp.new(r, Regexp::IGNORECASE) }

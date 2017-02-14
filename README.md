@@ -12,7 +12,11 @@ CONFIG='{
   "index_prefix": "instant_search_",
   "min_letters": 3,
   "min_hits": 5,
-  "to_generate": { "instant_search": [["brand"], ["type"], ["category"], ["brand", "type"]] }
+  "to_generate": { "instant_search": [["brand"], ["type"], ["category"], ["brand", "type"]] },
+  "exclude": [
+    "p[o0]rn",
+    "killing.*people"
+  ]
 }' \
 bundle exec ./run
 ```

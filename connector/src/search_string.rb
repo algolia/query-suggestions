@@ -5,4 +5,8 @@ module SearchString
   def self.clean str
     str.strip.split(/\s+/).join(' ').downcase
   end
+
+  def self.keep? str
+    !str.match(SKIP_REGEXP) && !CONFIG['exclude'].any? { |r| str.match(r) }
+  end
 end

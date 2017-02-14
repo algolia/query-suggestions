@@ -46,8 +46,8 @@ def main
     popular.each_with_index do |p, i|
       q = SearchString.clean(p['query'])
       puts "[#{idx.name}] Query #{i + 1} / #{popular.size}: \"#{q}\""
-      next if q =~ SearchString::SKIP_REGEXP
       next if q.length < CONFIG['min_letters']
+      next unless SearchString.keep?(q)
       rep = idx.search_exact q
       next if rep['nbHits'] < CONFIG['min_hits']
       res.push(

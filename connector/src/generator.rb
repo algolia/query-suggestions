@@ -50,6 +50,6 @@ class Generator
     return [] if values.nil?
     values
       .keys
-      .grep(SearchString::KEEP_REGEXP)
+      .select { |s| SearchString.keep?(s) }
   end
 end
