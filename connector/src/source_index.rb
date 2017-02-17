@@ -3,6 +3,16 @@ require 'algoliasearch'
 require_relative './config.rb'
 
 class SourceIndex
+  APPROX_RATIO = 4
+  APPROX_MAX = 40
+
+  SEARCH_PARAMETERS = {
+    hitsPerPage: 0,
+    analytics: false,
+    attributesToRetrieve: [],
+    attributesToSnippet: []
+  }.freeze
+
   def self.client
     @client ||= Algolia::Client.new(
       application_id: application_id,
@@ -33,14 +43,24 @@ class SourceIndex
   def search_exact query
     index.search(
       query,
-      typoTolerance: false,
-      queryType: 'prefixNone',
-      removeWordsIfNoResults: 'none',
-      hitsPerPage: 0,
-      attributesToRetrieve: [],
-      attributesToSnippet: [],
-      attributesToHighlight: [],
-      analytics: false
+      SEARCH_PARAMETERS.merge(
+        queryType: 'prefixNone',
+        typoTolerance: false,
+        removeWordsIfNoResults: 'none',
+        ignorePlurals: false
+      )
+    )
+  end
+
+  def search_approx query
+    index.search(
+      query,
+      SEARCH_PARAMETERS.merge(
+        hitsPerPage: [CONFIG['min_hits'] * APPROX_RATIO, APPROX_MAX].min,
+        queryType: CONFIG['query_types'][name],
+        highlightPreTag: '<HIGHLIGHT>',
+        highlightPostTag: '</HIGHLIGHT>'
+      )
     )
   end
 

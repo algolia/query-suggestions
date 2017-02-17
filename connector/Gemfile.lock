@@ -11,6 +11,7 @@ GEM
       json (>= 1.5.1)
     coderay (1.1.1)
     concurrent-ruby (1.0.2)
+    damerau-levenshtein (1.2.0)
     httpclient (2.8.2.4)
     i18n (0.7.0)
     json (2.0.2)
@@ -31,8 +32,9 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   algoliasearch
+  damerau-levenshtein (~> 1.1)
   httpclient (~> 2.8.2.4)
   pry
 
 BUNDLED WITH
-   1.13.6
+   1.14.3

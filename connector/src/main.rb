@@ -1,6 +1,10 @@
 require 'active_support'
 require 'active_support/time'
 require 'active_support/core_ext/object/blank'
+require 'damerau-levenshtein'
+
+# Debug
+require 'yaml'
 require 'pry'
 
 require_relative './config.rb'
@@ -32,6 +36,92 @@ def generated idx
   res
 end
 
+def check_none idx, q
+  rep = idx.search(
+    q,
+    queryType: 'prefixNone',
+    typoTolerance: false,
+    attributesToHighlight: []
+  )
+  return nil if rep['nbHits'] < CONFIG['min_hits']
+  q
+end
+
+def distance s1, s2
+  DamerauLevenshtein.distance(s1, s2, 1, 3)
+end
+
+def highlight_strings rep, word
+  rep['hits']
+    .map { |h|
+      h['_highlightResult']
+      .values
+    }
+    .flatten
+    .select { |o| (o['matchedWords'] || []).include? word }
+    .map { |o| o['value'] }
+end
+
+def best_candidate_word word, rep
+  candidates = {}
+
+  highlight_strings(rep, word).each do |str|
+    matched_words = str.scan(%r{<HIGHLIGHT>(.*?)</HIGHLIGHT>([\p{L}0-9]*)})
+    matched_words.each do |match, rest|
+      full_word = SearchString.clean "#{match}#{rest}"
+      next unless SearchString.keep? full_word
+      candidates[full_word] ||= []
+      candidates[full_word].push(distance(match, word))
+    end
+  end
+
+  tmp = candidates.map do |full_word, scores|
+    min_score, scores_count = scores
+                              .group_by { |i| i }
+                              .map { |score, arr| [score, arr.size] }
+                              .sort_by { |score, _| score }
+                              .first
+    [full_word, min_score, scores_count]
+  end
+
+  _, tmp = tmp
+           .group_by { |_word, score, _count| score }
+           .sort_by { |score, _| score }
+           .first
+
+  return nil if tmp.nil? || tmp.empty?
+
+  tmp
+    .sort_by { |_word, _score, count| -count }
+    .first
+    .first
+end
+
+
+def check_prefix idx, q, only_last
+  rep = idx.search_approx(q)
+  return nil if rep['nbHits'] < CONFIG['min_hits']
+  splitted = q.split(/\s+/)
+  res = []
+  splitted.each_with_index do |word, i|
+    if only_last && i != splitted.size - 1
+      res.push(word)
+    else
+      res.push best_candidate_word(word, rep)
+    end
+  end
+  res.join(' ')
+end
+
+def check_query idx, q
+  qt = CONFIG['query_types'][idx.name]
+  case qt
+  when 'prefixNone' then q
+  when 'prefixLast' then check_prefix idx, q, true
+  when 'prefixAll'  then check_prefix idx, q, false
+  end
+end
+
 def main
   res = []
   each_index do |idx|
@@ -48,6 +138,8 @@ def main
       puts "[#{idx.name}] Query #{i + 1} / #{popular.size}: \"#{q}\""
       next if q.length < CONFIG['min_letters']
       next unless SearchString.keep?(q)
+      q = check_query idx, q
+      next if q.nil?
       rep = idx.search_exact q
       next if rep['nbHits'] < CONFIG['min_hits']
       res.push(
