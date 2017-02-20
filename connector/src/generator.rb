@@ -50,6 +50,6 @@ class Generator
     return [] if values.nil?
     values
       .keys
-      .select { |s| SearchString.keep?(s) }
+      .select { |s| SearchString.keep?(s, @index.config.exclude) }
   end
 end

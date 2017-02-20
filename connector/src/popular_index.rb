@@ -42,6 +42,12 @@ class PopularIndex
     "#{CONFIG['index_prefix']}popular_searches"
   end
 
+  def config
+    @config ||= OpenStruct.new(
+      CONFIG['indices'].find { |idx| idx['name'] == @name }
+    )
+  end
+
   def index
     @index ||= self.class.client.init_index name
   end

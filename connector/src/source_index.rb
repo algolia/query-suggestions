@@ -36,6 +36,12 @@ class SourceIndex
     @name = name
   end
 
+  def config
+    @config ||= OpenStruct.new(
+      CONFIG['indices'].find { |idx| idx['name'] == @name }
+    )
+  end
+
   def search *args
     index.search(*args)
   end
@@ -56,8 +62,8 @@ class SourceIndex
     index.search(
       query,
       SEARCH_PARAMETERS.merge(
-        hitsPerPage: [CONFIG['min_hits'] * APPROX_RATIO, APPROX_MAX].min,
-        queryType: CONFIG['query_types'][name],
+        hitsPerPage: [config.min_hits * APPROX_RATIO, APPROX_MAX].min,
+        queryType: config.query_type,
         highlightPreTag: '<HIGHLIGHT>',
         highlightPostTag: '</HIGHLIGHT>'
       )
