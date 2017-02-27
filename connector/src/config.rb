@@ -6,21 +6,21 @@ CONFIG = {
   'index_prefix' => ENV['INDEX_PREFIX']
 }.merge(JSON.parse(ENV['CONFIG']))
 
+def idx_param(idx, param, default)
+  idx[param] ||= CONFIG[param] || default
+end
+
 CONFIG['indices'] ||= []
+CONFIG['indices'].each do |idx|
+  raise ArgumentError, 'Missing `name` parameter on an index' unless idx['name']
 
-CONFIG['min_hits'] = 5 if CONFIG['min_hits'].blank?
-CONFIG['min_hits'] = CONFIG['min_hits'].to_i
+  idx_param idx, 'replicas', true
+  idx_param idx, 'analytics_tags', []
+  idx_param idx, 'generate', []
+  idx_param idx, 'query_type', nil
 
-CONFIG['min_letters'] = 3 if CONFIG['min_letters'].blank?
-CONFIG['min_letters'] = CONFIG['min_letters'].to_i
-
-CONFIG['analytics_tags'] ||= ''
-
-CONFIG['exclude'] ||= []
-CONFIG['exclude'].map! { |r| Regexp.new(r, Regexp::IGNORECASE) }
-
-CONFIG['query_types'] ||= {}
-
-CONFIG['indices'].each do |i|
-  CONFIG['query_types'][i] ||= 'prefixLast'
+  idx_param idx, 'min_hits', 5
+  idx_param idx, 'min_letters', 4
+  idx_param idx, 'exclude', []
+  idx['exclude'].map! { |r| Regexp.new(r, Regexp::IGNORECASE) }
 end

@@ -17,7 +17,7 @@ require_relative './search_string.rb'
 def each_index &_block
   raise ArgumentError, 'Missing block' unless block_given?
   CONFIG['indices'].each do |idx|
-    idx = SourceIndex.new(idx)
+    idx = SourceIndex.new(idx['name'])
     yield idx
   end
 end
@@ -27,10 +27,8 @@ def target_index
 end
 
 def generated idx
-  return [] if CONFIG['to_generate'].blank?
-  return [] if CONFIG['to_generate'][idx.name].blank?
   res = []
-  CONFIG['to_generate'][idx.name].each do |facets|
+  idx.config.generate.each do |facets|
     res += Generator.new(idx, facets).generate
   end
   res
@@ -43,7 +41,7 @@ def check_none idx, q
     typoTolerance: false,
     attributesToHighlight: []
   )
-  return nil if rep['nbHits'] < CONFIG['min_hits']
+  return nil if rep['nbHits'] < idx.config.min_hits
   q
 end
 
@@ -62,14 +60,14 @@ def highlight_strings rep, word
     .map { |o| o['value'] }
 end
 
-def best_candidate_word word, rep
+def best_candidate_word idx, word, rep
   candidates = {}
 
   highlight_strings(rep, word).each do |str|
     matched_words = str.scan(%r{<HIGHLIGHT>(.*?)</HIGHLIGHT>([\p{L}0-9]*)})
     matched_words.each do |match, rest|
       full_word = SearchString.clean "#{match}#{rest}"
-      next unless SearchString.keep? full_word
+      next unless SearchString.keep?(full_word, idx.config.exclude)
       candidates[full_word] ||= []
       candidates[full_word].push(distance(match, word))
     end
@@ -100,21 +98,21 @@ end
 
 def check_prefix idx, q, only_last
   rep = idx.search_approx(q)
-  return nil if rep['nbHits'] < CONFIG['min_hits']
+  return nil if rep['nbHits'] < idx.config.min_hits
   splitted = q.split(/\s+/)
   res = []
   splitted.each_with_index do |word, i|
     if only_last && i != splitted.size - 1
       res.push(word)
     else
-      res.push best_candidate_word(word, rep)
+      res.push best_candidate_word(idx, word, rep)
     end
   end
   res.join(' ')
 end
 
 def check_query idx, q
-  qt = CONFIG['query_types'][idx.name]
+  qt = idx.config.query_type
   case qt
   when 'prefixNone' then q
   when 'prefixLast' then check_prefix idx, q, true
@@ -130,18 +128,18 @@ def main
       size: 10_000,
       startAt: (Time.now - 90.days).to_i,
       endAt: Time.now.to_i,
-      tags: CONFIG['analytics_tags']
+      tags: idx.config.analytics_tags.join(',')
     )
     popular += generated idx
     popular.each_with_index do |p, i|
       q = SearchString.clean(p['query'])
       puts "[#{idx.name}] Query #{i + 1} / #{popular.size}: \"#{q}\""
-      next if q.length < CONFIG['min_letters']
-      next unless SearchString.keep?(q)
+      next if q.length < idx.config.min_letters
+      next unless SearchString.keep?(q, idx.config.exclude)
       q = check_query idx, q
       next if q.nil?
       rep = idx.search_exact q
-      next if rep['nbHits'] < CONFIG['min_hits']
+      next if rep['nbHits'] < idx.config.min_hits
       res.push(
         objectID: q,
         query: q,
