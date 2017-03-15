@@ -1,4 +1,5 @@
 require 'algoliasearch'
+require 'damerau-levenshtein'
 
 require_relative './config.rb'
 require_relative './generator.rb'
@@ -101,5 +102,83 @@ class SourceIndex
 
   def index
     @index ||= self.class.client.init_index name
+  end
+
+  def transform_query q
+    return nil if q.length < config.min_letters
+    return nil unless SearchString.keep?(q, config.exclude)
+    q = case config.query_type
+        when 'prefixNone' then q
+        when 'prefixLast' then check_prefix q, true
+        when 'prefixAll'  then check_prefix q, false
+        end
+    return if q.blank?
+    return nil if q.length < config.min_letters
+    return nil unless SearchString.keep?(q, config.exclude)
+    q
+  end
+
+  private
+
+  def distance s1, s2
+    DamerauLevenshtein.distance(s1, s2, 1, 3)
+  end
+
+  def highlight_strings rep, word
+    rep['hits']
+      .map { |h| h['_highlightResult'].values }
+      .flatten
+      .select { |o| (o['matchedWords'] || []).include? word }
+      .map { |o| o['value'] }
+  end
+
+  def best_candidate_word word, rep
+    candidates = {}
+
+    highlight_strings(rep, word).each do |str|
+      matched_words = str.scan(%r{<HIGHLIGHT>(.*?)</HIGHLIGHT>([\p{L}0-9]*)})
+      matched_words.each do |match, rest|
+        full_word = SearchString.clean "#{match}#{rest}"
+        next unless SearchString.keep?(full_word, config.exclude)
+        candidates[full_word] ||= []
+        candidates[full_word].push(distance(match, word))
+      end
+    end
+
+    tmp = candidates.map do |full_word, scores|
+      min_score, scores_count = scores
+                                .group_by { |i| i }
+                                .map { |score, arr| [score, arr.size] }
+                                .sort_by { |score, _| score }
+                                .first
+      [full_word, min_score, scores_count]
+    end
+
+    _, tmp = tmp
+             .group_by { |_word, score, _count| score }
+             .sort_by { |score, _| score }
+             .first
+
+    return nil if tmp.nil? || tmp.empty?
+
+    tmp
+      .sort_by { |_word, _score, count| -count }
+      .first
+      .first
+  end
+
+  def check_prefix q, only_last
+    rep = search_approx(q)
+    return nil if rep['nbHits'] < config.min_hits
+    splitted = q.split(/\s+/)
+    res = []
+    splitted.each_with_index do |word, i|
+      if only_last && i != splitted.size - 1
+        res.push(word)
+      else
+        res.push best_candidate_word(word, rep)
+      end
+    end
+    res.join(' ')
   end
 end
