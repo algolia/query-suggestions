@@ -27,6 +27,3 @@ CONFIG['indices'].each do |idx|
   idx_param idx, 'exclude', []
   idx['exclude'].map! { |r| Regexp.new(r, Regexp::IGNORECASE) }
 end
-
-require 'pry'
-binding.pry
