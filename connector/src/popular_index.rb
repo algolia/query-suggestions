@@ -28,14 +28,11 @@ class PopularIndex
   end
 
   def initialize
+    tmp_index.set_settings! settings
   end
 
   def push records
-    tmp_index.set_settings! settings
-    records.each_slice(1000) do |recs|
-      tmp_index.partial_update_objects! recs
-    end
-    move_tmp
+    tmp_index.partial_update_objects! records
   end
 
   def name

@@ -154,7 +154,11 @@ def main
           _operation: 'Increment'
         }
       )
+      if (res.size % 1000).zero?
+        target_index.push res
+        res = []
+      end
     end
   end
-  target_index.push res
+  target_index.move_tmp
 end
