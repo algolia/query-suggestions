@@ -43,7 +43,7 @@ class Generator
       attributesToSnippet: [],
       facets: facet,
       filters: filters,
-      maxValuesPerFacet: 1000,
+      maxValuesPerFacet: 1_000,
       analytics: false
     )
     values = rep['facets'][facet]
