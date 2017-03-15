@@ -1,3 +1,15 @@
+<a name="1.4.0"></a>
+# [1.4.0](https://github.com/algolia/algolia-popular-queries/compare/v1.3.0...v1.4.0) (2017-03-15)
+
+
+### Features
+
+* **CONFIG:** prepare new format ([6eb4b15](https://github.com/algolia/algolia-popular-queries/commit/6eb4b15))
+* **prefix:** handle prefix searches too now ([622ba1b](https://github.com/algolia/algolia-popular-queries/commit/622ba1b))
+* **replicas:** use the same config for replicas ([f33eed5](https://github.com/algolia/algolia-popular-queries/commit/f33eed5))
+
+
+
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/algolia/algolia-popular-queries/compare/v1.2.1...v1.3.0) (2017-02-14)
 
