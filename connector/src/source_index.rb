@@ -38,12 +38,16 @@ class SourceIndex
   end
 
   def config
+    return @config unless @config.nil?
+
     @inherited_config['replicas'] = false
     @inherited_config['generate'] = []
-    @config ||= OpenStruct.new(
-      CONFIG['indices'].find { |idx| idx['name'] == @name } ||
-        @inherited_config
-    )
+
+    @config = CONFIG['indices'].find { |idx| idx['name'] == @name }
+    @config ||= @inherited_config
+    @config['query_type'] = settings['queryType'] if @config['query_type'].nil?
+
+    @config = OpenStruct.new(@config)
   end
 
   def replicas
