@@ -47,7 +47,6 @@ def main
       q = idx.transform_query q
       next if q.blank?
       rep = idx.search_exact q
-      puts "#{idx.config.min_letters} - #{q.size} - #{q}"
       next if rep['nbHits'] < idx.config.min_hits
       res.push(
         objectID: q,
