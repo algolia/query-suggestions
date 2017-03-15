@@ -24,6 +24,7 @@ CONFIG['indices'].each do |idx|
 
   idx_param idx, 'min_hits', 5
   idx_param idx, 'min_letters', 4
-  idx_param idx, 'exclude', []
+
+  idx['exclude'] ||= (CONFIG['exclude'] && !CONFIG['exclude'].empty?) ? CONFIG['exclude'] : []
   idx['exclude'].map! { |r| /#{r}/i }
 end
