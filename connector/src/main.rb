@@ -1,7 +1,10 @@
 require 'active_support'
 require 'active_support/time'
 require 'active_support/core_ext/object/blank'
+require 'active_support/core_ext/object/json'
+
 require 'damerau-levenshtein'
+require 'json'
 
 # Debug
 require 'yaml'
@@ -19,6 +22,9 @@ def each_index &_block
   CONFIG['indices'].each do |idx|
     idx = SourceIndex.new(idx['name'])
     yield idx
+    idx.replicas.each do |r|
+      yield r
+    end
   end
 end
 

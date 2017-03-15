@@ -32,14 +32,28 @@ class SourceIndex
 
   attr_reader :name
 
-  def initialize name
+  def initialize name, inherited_config = {}
     @name = name
+    @inherited_config = JSON.parse(inherited_config.to_json)
   end
 
   def config
+    @inherited_config.delete('replicas')
+    @inherited_config.delete('generate')
     @config ||= OpenStruct.new(
-      CONFIG['indices'].find { |idx| idx['name'] == @name }
+      CONFIG['indices'].find { |idx| idx['name'] == @name } ||
+        @inherited_config
     )
+  end
+
+  def replicas
+    return [] unless @config['replicas']
+    replicas = settings['replicas'] || settings['slaves']
+    replicas.map { |r| SourceIndex.new(r, config.to_h) }
+  end
+
+  def settings
+    @settings ||= index.get_settings
   end
 
   def search *args

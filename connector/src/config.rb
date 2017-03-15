@@ -16,6 +16,9 @@ CONFIG['indices'].each do |idx|
 
   idx_param idx, 'replicas', true
   idx_param idx, 'analytics_tags', []
+  if idx['analytics_tags'].is_a? String
+    idx['analytics_tags'] = idx['analytics_tags'].split(',').map(&:trim)
+  end
   idx_param idx, 'generate', []
   idx_param idx, 'query_type', nil
 
@@ -24,3 +27,6 @@ CONFIG['indices'].each do |idx|
   idx_param idx, 'exclude', []
   idx['exclude'].map! { |r| Regexp.new(r, Regexp::IGNORECASE) }
 end
+
+require 'pry'
+binding.pry
