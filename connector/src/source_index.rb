@@ -38,8 +38,8 @@ class SourceIndex
   end
 
   def config
-    @inherited_config.delete('replicas')
-    @inherited_config.delete('generate')
+    @inherited_config['replicas'] = false
+    @inherited_config['generate'] = []
     @config ||= OpenStruct.new(
       CONFIG['indices'].find { |idx| idx['name'] == @name } ||
         @inherited_config
