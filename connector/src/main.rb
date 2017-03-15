@@ -14,7 +14,6 @@ require_relative './config.rb'
 require_relative './analytics.rb'
 require_relative './popular_index.rb'
 require_relative './source_index.rb'
-require_relative './generator.rb'
 require_relative './search_string.rb'
 
 def each_index &_block
@@ -30,14 +29,6 @@ end
 
 def target_index
   @target_index ||= PopularIndex.new
-end
-
-def generated idx
-  res = []
-  idx.config.generate.each do |facets|
-    res += Generator.new(idx, facets).generate
-  end
-  res
 end
 
 def check_none idx, q
@@ -136,7 +127,7 @@ def main
       endAt: Time.now.to_i,
       tags: idx.config.analytics_tags.join(',')
     )
-    popular += generated idx
+    popular += idx.generated
     popular.each_with_index do |p, i|
       q = SearchString.clean(p['query'])
       puts "[#{idx.name}] Query #{i + 1} / #{popular.size}: \"#{q}\""

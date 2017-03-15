@@ -1,6 +1,7 @@
 require 'algoliasearch'
 
 require_relative './config.rb'
+require_relative './generator.rb'
 
 class SourceIndex
   APPROX_RATIO = 4
@@ -32,9 +33,10 @@ class SourceIndex
 
   attr_reader :name
 
-  def initialize name, inherited_config = {}
+  def initialize name, inherited_config = {}, inherited_generated = nil
     @name = name
     @inherited_config = JSON.parse(inherited_config.to_json)
+    @generated = inherited_generated
   end
 
   def config
@@ -53,11 +55,20 @@ class SourceIndex
   def replicas
     return [] unless @config['replicas']
     replicas = settings['replicas'] || settings['slaves']
-    replicas.map { |r| SourceIndex.new(r, config.to_h) }
+    replicas.map { |r| SourceIndex.new(r, config.to_h, generated) }
   end
 
   def settings
     @settings ||= index.get_settings
+  end
+
+  def generated
+    return @generated unless @generated.nil?
+    @generated = []
+    config.generate.each do |facets|
+      @generated += Generator.new(self, facets).generate
+    end
+    @generated
   end
 
   def search *args
