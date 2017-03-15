@@ -1,3 +1,22 @@
+<a name="1.5.0"></a>
+# [1.5.0](https://github.com/algolia/algolia-popular-queries/compare/v1.4.0...v1.5.0) (2017-03-15)
+
+
+### Bug Fixes
+
+* **config:** regexp warning ([ade02f6](https://github.com/algolia/algolia-popular-queries/commit/ade02f6))
+* **main:** do not hold everything in ram ([59606e8](https://github.com/algolia/algolia-popular-queries/commit/59606e8))
+* **main:** ignore if blank, not only nil ([fe1c6c1](https://github.com/algolia/algolia-popular-queries/commit/fe1c6c1))
+* **source_index:** generate and replicas should be set to their defaults ([78f24d1](https://github.com/algolia/algolia-popular-queries/commit/78f24d1))
+* **source_index:** properly handle query_type ([b3cc714](https://github.com/algolia/algolia-popular-queries/commit/b3cc714))
+
+
+### Features
+
+* **source_index:** replicas should reuse generated from primary ([02a9a20](https://github.com/algolia/algolia-popular-queries/commit/02a9a20))
+
+
+
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/algolia/algolia-popular-queries/compare/v1.3.0...v1.4.0) (2017-03-15)
 
