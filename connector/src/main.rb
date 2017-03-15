@@ -143,7 +143,7 @@ def main
       next if q.length < idx.config.min_letters
       next unless SearchString.keep?(q, idx.config.exclude)
       q = check_query idx, q
-      next if q.nil?
+      next if q.blank?
       rep = idx.search_exact q
       next if rep['nbHits'] < idx.config.min_hits
       res.push(
