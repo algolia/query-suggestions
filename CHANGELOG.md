@@ -1,3 +1,18 @@
+<a name="1.6.0"></a>
+# [1.6.0](https://github.com/algolia/algolia-popular-queries/compare/v1.5.0...v1.6.0) (2017-03-20)
+
+
+### Bug Fixes
+
+* **config:** properly handle exclude inheritance ([2b3a11a](https://github.com/algolia/algolia-popular-queries/commit/2b3a11a))
+
+
+### Features
+
+* **ignore_plurals:** new parameter ([5c61445](https://github.com/algolia/algolia-popular-queries/commit/5c61445))
+
+
+
 <a name="1.5.0"></a>
 # [1.5.0](https://github.com/algolia/algolia-popular-queries/compare/v1.4.0...v1.5.0) (2017-03-15)
 
