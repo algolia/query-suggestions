@@ -51,6 +51,7 @@ def main
       res.push(
         objectID: q,
         query: q,
+        nb_words: q.split(' ').size,
         popularity: {
           value: p['count'],
           _operation: 'Increment'
@@ -62,5 +63,7 @@ def main
       end
     end
   end
+  target_index.push res
+  target_index.ignore_plurals
   target_index.move_tmp
 end

@@ -28,3 +28,5 @@ CONFIG['indices'].each do |idx|
   idx['exclude'] ||= (CONFIG['exclude'] && !CONFIG['exclude'].empty?) ? CONFIG['exclude'] : []
   idx['exclude'].map! { |r| /#{r}/i }
 end
+
+CONFIG['ignore_plurals'] ||= false
