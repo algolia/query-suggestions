@@ -55,7 +55,7 @@ class SourceIndex
 
   def replicas
     return [] unless @config['replicas']
-    replicas = settings['replicas'] || settings['slaves']
+    replicas = settings['replicas'] || settings['slaves'] || []
     replicas.map { |r| SourceIndex.new(r, config.to_h, generated) }
   end
 
