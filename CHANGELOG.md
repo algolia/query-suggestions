@@ -1,3 +1,13 @@
+<a name="1.6.1"></a>
+## [1.6.1](https://github.com/algolia/algolia-popular-queries/compare/v1.6.0...v1.6.1) (2017-03-22)
+
+
+### Bug Fixes
+
+* **source_index:** slaves or replica setting can be empty ([cc21384](https://github.com/algolia/algolia-popular-queries/commit/cc21384))
+
+
+
 <a name="1.6.0"></a>
 # [1.6.0](https://github.com/algolia/algolia-popular-queries/compare/v1.5.0...v1.6.0) (2017-03-20)
 
