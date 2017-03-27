@@ -1,3 +1,13 @@
+<a name="1.7.0"></a>
+# [1.7.0](https://github.com/algolia/algolia-popular-queries/compare/v1.6.1...v1.7.0) (2017-03-27)
+
+
+### Features
+
+* **unprefixer:** change prefix replacement ([b2fd3dc](https://github.com/algolia/algolia-popular-queries/commit/b2fd3dc))
+
+
+
 <a name="1.6.1"></a>
 ## [1.6.1](https://github.com/algolia/algolia-popular-queries/compare/v1.6.0...v1.6.1) (2017-03-22)
 
