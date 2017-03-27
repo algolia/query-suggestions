@@ -44,7 +44,7 @@ def main
     popular.each_with_index do |p, i|
       q = SearchString.clean(p['query'])
       puts "[#{idx.name}] Query #{i + 1} / #{popular.size}: \"#{q}\""
-      q = idx.transform_query q
+      q = idx.unprefixer.transform q
       next if q.blank?
       rep = idx.search_exact q
       next if rep['nbHits'] < idx.config.min_hits
