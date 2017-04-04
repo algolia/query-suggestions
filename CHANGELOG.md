@@ -1,3 +1,13 @@
+<a name="1.8.0"></a>
+# [1.8.0](https://github.com/algolia/algolia-popular-queries/compare/v1.7.0...v1.8.0) (2017-04-04)
+
+
+### Features
+
+* **distinct:** add distinct_by_ip index config ([c240222](https://github.com/algolia/algolia-popular-queries/commit/c240222))
+
+
+
 <a name="1.7.0"></a>
 # [1.7.0](https://github.com/algolia/algolia-popular-queries/compare/v1.6.1...v1.7.0) (2017-03-27)
 
