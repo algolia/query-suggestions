@@ -15,6 +15,7 @@ CONFIG['indices'].each do |idx|
   raise ArgumentError, 'Missing `name` parameter on an index' unless idx['name']
 
   idx_param idx, 'replicas', true
+  idx_param idx, 'distinct_by_ip', false
   idx_param idx, 'analytics_tags', []
   if idx['analytics_tags'].is_a? String
     idx['analytics_tags'] = idx['analytics_tags'].split(',').map(&:trim)

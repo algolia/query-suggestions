@@ -38,7 +38,8 @@ def main
       size: 10_000,
       startAt: (Time.now - 90.days).to_i,
       endAt: Time.now.to_i,
-      tags: idx.config.analytics_tags.join(',')
+      tags: idx.config.analytics_tags.join(','),
+      distinctIPCount: idx.config.distinct_by_ip
     )
     popular += idx.generated
     popular.each_with_index do |p, i|
