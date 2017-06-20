@@ -1,10 +1,10 @@
 {
-  "name": "algolia-popular-queries",
+  "name": "algolia-query-suggestions",
   "version": "1.8.0",
   "author": "Algolia <support@algolia.com>",
   "license": "MIT",
-  "description": "Private repository for scripts and tools used with Algolia Popular Queries",
-  "homepage": "https://github.com/algolia/algolia-popular-queries#readme",
+  "description": "Private repository for scripts and tools used with Algolia Query suggestions",
+  "homepage": "https://github.com/algolia/query-suggestions#readme",
   "private": true,
   "scripts": {
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/algolia/algolia-popular-queries.git"
+    "url": "git+https://github.com/algolia/query-suggestions.git"
   },
   "devDependencies": {
     "conventional-changelog-cli": "^1.2.0",

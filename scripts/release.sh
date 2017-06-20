@@ -11,10 +11,10 @@ fi
 
 current=`json -f package.json version`
 read -p "New version number (current is ${current}): " version
-export ALGOLIASEARCH_POPULAR_VERSION=$version
+export ALGOLIASEARCH_SUGGESTIONS_VERSION=$version
 
 # Ask for confirmation
-read -p "[All] We'll run all release scripts, then \`git push\` with \"v$ALGOLIASEARCH_POPULAR_VERSION\". Continue (yn)? " -n 1 -r
+read -p "[All] We'll run all release scripts, then \`git push\` with \"v$ALGOLIASEARCH_SUGGESTIONS_VERSION\". Continue (yn)? " -n 1 -r
 echo
 [[ $REPLY =~ ^[Yy]$ ]] || exit -1
 

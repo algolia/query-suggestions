@@ -3,7 +3,7 @@
 # Exit on error
 set -e
 
-CONNECTOR_NAME="algolia/algolia-popular-queries"
+CONNECTOR_NAME="algolia/query-suggestions"
 
 # Check if docker is running
 if ! docker images >/dev/null 2>&1; then
@@ -14,16 +14,16 @@ if ! docker images >/dev/null 2>&1; then
 fi
 
 # Ask for new version number if not in env
-if [[ $ALGOLIASEARCH_POPULAR_VERSION == "" ]]; then
+if [[ $ALGOLIASEARCH_SUGGESTIONS_VERSION == "" ]]; then
   current=`json -f package.json version`
   read -p "New version number (current is ${current}): " version
-  export ALGOLIASEARCH_POPULAR_VERSION=$version
+  export ALGOLIASEARCH_SUGGESTIONS_VERSION=$version
 fi
 
 version_regex="^\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)$"
-major_tag=`echo "$ALGOLIASEARCH_POPULAR_VERSION" | sed "s/${version_regex}/\1/"`
-minor_tag=`echo "$ALGOLIASEARCH_POPULAR_VERSION" | sed "s/${version_regex}/\1.\2/"`
-patch_tag=`echo "$ALGOLIASEARCH_POPULAR_VERSION" | sed "s/${version_regex}/\1.\2.\3/"`
+major_tag=`echo "$ALGOLIASEARCH_SUGGESTIONS_VERSION" | sed "s/${version_regex}/\1/"`
+minor_tag=`echo "$ALGOLIASEARCH_SUGGESTIONS_VERSION" | sed "s/${version_regex}/\1.\2/"`
+patch_tag=`echo "$ALGOLIASEARCH_SUGGESTIONS_VERSION" | sed "s/${version_regex}/\1.\2.\3/"`
 
 # Ask for confirmation
 echo "[Crawler] We'll \`docker rm ${CONNECTOR_NAME}:*\`, then \`docker build\` and \`docker push\`"
@@ -41,7 +41,7 @@ done
 
 # Build image, tag it and push
 cd connector/
-echo $ALGOLIASEARCH_POPULAR_VERSION > VERSION
+echo $ALGOLIASEARCH_SUGGESTIONS_VERSION > VERSION
 docker build -t $CONNECTOR_NAME .
 img=`docker images -q ${CONNECTOR_NAME}:latest`
 docker tag $img ${CONNECTOR_NAME}:v$major_tag

@@ -2,7 +2,7 @@ require 'algoliasearch'
 
 require_relative './config.rb'
 
-class PopularIndex
+class SuggestionsIndex
   DEFAULT_SETTINGS = {
     attributesToIndex: %w(query),
     customRanking: %w(desc(popularity)),
@@ -36,7 +36,7 @@ class PopularIndex
   end
 
   def name
-    "#{CONFIG['index_prefix']}popular_searches"
+    "#{CONFIG['index_prefix']}query_suggestions"
   end
 
   def tmp_name

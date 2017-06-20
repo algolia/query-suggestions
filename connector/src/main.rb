@@ -11,7 +11,7 @@ require 'pry'
 
 require_relative './config.rb'
 require_relative './analytics.rb'
-require_relative './popular_index.rb'
+require_relative './suggestions_index.rb'
 require_relative './source_index.rb'
 require_relative './search_string.rb'
 
@@ -27,7 +27,7 @@ def each_index &_block
 end
 
 def target_index
-  @target_index ||= PopularIndex.new
+  @target_index ||= SuggestionsIndex.new
 end
 
 def main

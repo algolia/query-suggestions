@@ -1,6 +1,6 @@
-# Algolia popular Searches
+# Query suggestions
 
-Using Algolia indices and their analytics, generate a new index with popular searches.
+Using Algolia indices and their analytics, generate a new query suggestion index.
 
 # Quick Start
 
@@ -24,7 +24,7 @@ For a more thorough example, click [here](#detailed-example).
 
 ## Global variables
 
-- `index_prefix`: The generated index will be called `${index_prefix}popular_searches`
+- `index_prefix`: The generated index will be called `${index_prefix}query_suggestions`
 
 ### Credentials
 
@@ -62,9 +62,9 @@ Source parameters:
   Default: the [`queryType` setting](https://www.algolia.com/doc/api-client/ruby/parameters/#querytype) value in the index settings (which itself defaults to `prefixLast`)
 
 Restriction parameters:
-- `min_letters <number>`: Too small searches will often be useless for your users  
+- `min_letters <number>`: Too small queries will often be useless for your users  
   Default: 4
-- `min_hits <number>`: Amount of associated hits with typo tolerance and prefix matching disabled, used to discard irrelevant searches  
+- `min_hits <number>`: Amount of associated hits with typo tolerance and prefix matching disabled, used to discard irrelevant queries  
   Default: 5 - Rule of thumb for big indices: Amount of records / 10000 .
 - `exclude <array of strings>`: Array of regular expressions that you don't want to match any of your suggestions  
   Default: []
