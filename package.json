@@ -1,6 +1,6 @@
 {
   "name": "algolia-query-suggestions",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "author": "Algolia <support@algolia.com>",
   "license": "MIT",
   "description": "Private repository for scripts and tools used with Algolia Query suggestions",

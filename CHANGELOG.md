@@ -1,3 +1,13 @@
+<a name="1.9.0"></a>
+# [1.9.0](https://github.com/algolia/query-suggestions/compare/v1.8.0...v1.9.0) (2017-06-20)
+
+
+### Features
+
+* **renaming:** change to query suggestions ([cfd3853](https://github.com/algolia/query-suggestions/commit/cfd3853))
+
+
+
 <a name="1.8.0"></a>
 # [1.8.0](https://github.com/algolia/query-suggestions/compare/v1.7.0...v1.8.0) (2017-04-04)
 
