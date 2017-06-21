@@ -57,7 +57,7 @@ def add_to_target_index idx, type, suggestions, remove: false
       current = []
     end
   end
-  target_index.push current
+  target_index.push! current
 end
 
 def main

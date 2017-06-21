@@ -28,6 +28,7 @@ class SuggestionsIndex
   end
 
   def initialize
+    tmp_index.set_settings!({})
   end
 
   def push records
