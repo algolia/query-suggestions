@@ -36,10 +36,9 @@ class SourceIndex
   attr_reader :name
   attr_reader :unprefixer
 
-  def initialize name, inherited_config = {}, inherited_generated = nil
+  def initialize name, inherited_config = {}
     @name = name
     @inherited_config = JSON.parse(inherited_config.to_json)
-    @generated = inherited_generated
     @unprefixer = Unprefixer.new(self)
   end
 
@@ -59,7 +58,7 @@ class SourceIndex
   def replicas
     return [] unless @config['replicas']
     replicas = settings['replicas'] || settings['slaves'] || []
-    replicas.map { |r| SourceIndex.new(r, config.to_h, generated) }
+    replicas.map { |r| SourceIndex.new(r, config.to_h) }
   end
 
   def settings
@@ -67,12 +66,11 @@ class SourceIndex
   end
 
   def generated
-    return @generated unless @generated.nil?
-    @generated = []
+    res = []
     config.generate.each do |facets|
-      @generated += Generator.new(self, facets).generate
+      res += Generator.new(self, facets).generate
     end
-    @generated
+    res
   end
 
   def ignore q
