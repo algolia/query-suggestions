@@ -53,7 +53,7 @@ class SuggestionsIndex
 
   def move_tmp
     tmp_index.set_settings! settings
-    self.class.client.move_index tmp_index.name, index.name
+    self.class.client.move_index! tmp_index.name, index.name
   end
 
   def settings
