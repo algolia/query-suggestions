@@ -1,3 +1,18 @@
+<a name="1.10.0"></a>
+# [1.10.0](https://github.com/algolia/query-suggestions/compare/v1.9.0...v1.10.0) (2017-07-12)
+
+
+### Bug Fixes
+
+* **plurals:** ensure the index is created and has no queue ([d2035eb](https://github.com/algolia/query-suggestions/commit/d2035eb))
+
+
+### Features
+
+* **external:** add the ability to import data from an external index ([5460020](https://github.com/algolia/query-suggestions/commit/5460020))
+
+
+
 <a name="1.9.0"></a>
 # [1.9.0](https://github.com/algolia/query-suggestions/compare/v1.8.0...v1.9.0) (2017-06-20)
 
