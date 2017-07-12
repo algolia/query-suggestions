@@ -23,6 +23,8 @@ CONFIG['indices'].each do |idx|
   idx_param idx, 'generate', []
   idx_param idx, 'query_type', nil
 
+  idx_param idx, 'facets', []
+
   idx_param idx, 'min_hits', 5
   idx_param idx, 'min_letters', 4
 

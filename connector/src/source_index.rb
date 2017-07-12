@@ -85,13 +85,17 @@ class SourceIndex
   end
 
   def search_exact query
+    facets = config.facets.map { |f| f['attribute'] }
+    max_facet_values = config.facets.map { |f| f['amount'] }.max
     index.search(
       query,
       SEARCH_PARAMETERS.merge(
         queryType: 'prefixNone',
         typoTolerance: false,
         removeWordsIfNoResults: 'none',
-        ignorePlurals: false
+        ignorePlurals: false,
+        facets: facets,
+        maxValuesPerFacet: max_facet_values
       )
     )
   end

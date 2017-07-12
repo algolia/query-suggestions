@@ -31,6 +31,20 @@ def target_index
   @target_index ||= SuggestionsIndex.new
 end
 
+def transform_facets_exact_count idx, rep
+  values = rep['facets'] || {}
+  idx.config.facets.map do |facet|
+    attr = facet['attribute']
+    res = values[attr] || []
+    [
+      attr,
+      res.map { |k, v| { value: k, count: v } }
+         .sort_by { |obj| -obj[:count] }
+         .first(facet['amount'])
+    ]
+  end.to_h
+end
+
 def add_to_target_index idx, type, suggestions, remove: false
   current = []
   iter = suggestions.clone
@@ -45,6 +59,9 @@ def add_to_target_index idx, type, suggestions, remove: false
       objectID: q,
       query: q,
       nb_words: q.split(' ').size,
+      facets: {
+        exact_matches: transform_facets_exact_count(idx, rep)
+      },
       popularity: {
         value: p['count'],
         _operation: 'Increment'
