@@ -45,7 +45,7 @@ def transform_facets_exact_count idx, rep
   end.to_h
 end
 
-def add_to_target_index idx, type, suggestions, remove: false
+def add_to_target_index idx, type, suggestions
   current = []
   iter = suggestions.clone
   iter.each_with_index do |p, i|
@@ -95,7 +95,7 @@ def main
 
     add_to_target_index idx, 'Generated', idx.generated
 
-    add_to_target_index idx, 'External', external, remove: true
+    add_to_target_index idx, 'External', external
   end
 
   target_index.ignore_plurals
