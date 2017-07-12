@@ -1,3 +1,18 @@
+<a name="1.11.0"></a>
+# [1.11.0](https://github.com/algolia/query-suggestions/compare/v1.10.0...v1.11.0) (2017-07-12)
+
+
+### Bug Fixes
+
+* **main:** fix typo resulting in incorrect method call ([a7751f4](https://github.com/algolia/query-suggestions/commit/a7751f4))
+
+
+### Features
+
+* **facets:** add count of hits with exact query ([c370a45](https://github.com/algolia/query-suggestions/commit/c370a45))
+
+
+
 <a name="1.10.0"></a>
 # [1.10.0](https://github.com/algolia/query-suggestions/compare/v1.9.0...v1.10.0) (2017-07-12)
 
