@@ -97,9 +97,9 @@ def main
 
     next unless primary_index
 
-    add_to_target_index idx, 'Generated', idx.generated
+    add_to_target_index idx, 'Generated', idx.generated, primary_index
 
-    add_to_target_index idx, 'External', external
+    add_to_target_index idx, 'External', external, primary_index
   end
 
   target_index.ignore_plurals
