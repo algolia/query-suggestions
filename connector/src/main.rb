@@ -45,7 +45,7 @@ def transform_facets_exact_count idx, rep
   end.to_h
 end
 
-def add_to_target_index idx, type, suggestions
+def add_to_target_index idx, type, suggestions, primary_index = false
   current = []
   iter = suggestions.clone
   iter.each_with_index do |p, i|
@@ -59,14 +59,18 @@ def add_to_target_index idx, type, suggestions
       objectID: q,
       query: q,
       nb_words: q.split(' ').size,
-      facets: {
-        exact_matches: transform_facets_exact_count(idx, rep)
-      },
       popularity: {
         value: p['count'],
         _operation: 'Increment'
       }
     }
+    if primary_index
+      object[idx.name.to_sym] = {
+        facets: {
+          exact_matches: transform_facets_exact_count(idx, rep)
+        }
+      }
+    end
     current.push(object)
     suggestions.delete_at(i)
     if (current.size % 1000).zero?
@@ -89,7 +93,7 @@ def main
       tags: idx.config.analytics_tags.join(','),
       distinctIPCount: idx.config.distinct_by_ip
     )
-    add_to_target_index idx, 'Popular', popular
+    add_to_target_index idx, 'Popular', popular, primary_index
 
     next unless primary_index
 
