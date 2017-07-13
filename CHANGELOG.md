@@ -1,3 +1,13 @@
+<a name="1.11.1"></a>
+## [1.11.1](https://github.com/algolia/query-suggestions/compare/v1.11.0...v1.11.1) (2017-07-13)
+
+
+### Bug Fixes
+
+* **facets:** one facets object per source index ([3252434](https://github.com/algolia/query-suggestions/commit/3252434))
+
+
+
 <a name="1.11.0"></a>
 # [1.11.0](https://github.com/algolia/query-suggestions/compare/v1.10.0...v1.11.0) (2017-07-12)
 
