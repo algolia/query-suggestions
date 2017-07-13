@@ -1,3 +1,13 @@
+<a name="1.11.2"></a>
+## [1.11.2](https://github.com/algolia/query-suggestions/compare/v1.11.1...v1.11.2) (2017-07-13)
+
+
+### Bug Fixes
+
+* **facets:** add facet counts to generated and external ([3074d5d](https://github.com/algolia/query-suggestions/commit/3074d5d))
+
+
+
 <a name="1.11.1"></a>
 ## [1.11.1](https://github.com/algolia/query-suggestions/compare/v1.11.0...v1.11.1) (2017-07-13)
 
