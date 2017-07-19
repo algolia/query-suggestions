@@ -7,7 +7,7 @@ CONFIG = {
 }.merge(JSON.parse(ENV['CONFIG']))
 
 def idx_param(idx, param, default)
-  idx[param] ||= CONFIG[param] || default
+  idx[param] = CONFIG[param] || default if idx[param].nil?
 end
 
 CONFIG['indices'] ||= []
