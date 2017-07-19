@@ -20,6 +20,8 @@ CONFIG['indices'].each do |idx|
   if idx['analytics_tags'].is_a? String
     idx['analytics_tags'] = idx['analytics_tags'].split(',').map(&:trim)
   end
+  idx_param idx, 'analytics_days', 90
+
   idx_param idx, 'generate', []
   idx_param idx, 'query_type', nil
 

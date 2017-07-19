@@ -88,7 +88,7 @@ def main
     popular = Analytics.popular_searches(
       idx.name,
       size: 10_000,
-      startAt: (Time.now - 90.days).to_i,
+      startAt: (Time.now - idx.config.analytics_days.days).to_i,
       endAt: Time.now.to_i,
       tags: idx.config.analytics_tags.join(','),
       distinctIPCount: idx.config.distinct_by_ip
