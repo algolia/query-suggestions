@@ -1,3 +1,13 @@
+<a name="1.13.0"></a>
+# [1.13.0](https://github.com/algolia/query-suggestions/compare/v1.12.0...v1.13.0) (2017-07-20)
+
+
+### Features
+
+* **record:** add nb_hits in each primary index ([3cf5ee8](https://github.com/algolia/query-suggestions/commit/3cf5ee8))
+
+
+
 <a name="1.12.0"></a>
 # [1.12.0](https://github.com/algolia/query-suggestions/compare/v1.11.2...v1.12.0) (2017-07-20)
 
