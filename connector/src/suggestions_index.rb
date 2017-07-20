@@ -29,11 +29,20 @@ class SuggestionsIndex
 
   def initialize
     tmp_index.set_settings!({})
+    @records = []
+    @plurals = []
   end
 
-  def push records
-    return if records.empty?
-    tmp_index.partial_update_objects! records
+  def push
+    return if @records.empty?
+    tmp_index.partial_update_objects! @records
+    @records = []
+  end
+
+  def add record
+    @records << record
+    return unless (@records.size % 1000).zero?
+    push
   end
 
   def name
@@ -65,8 +74,19 @@ class SuggestionsIndex
     DEFAULT_SETTINGS
   end
 
+  def push_plurals
+    return if @plurals.empty?
+    tmp_index.batch! requests: @plurals
+    @plurals = []
+  end
+
+  def add_plural action
+    @plurals << action
+    return unless (@plurals.size % 1000).zero?
+    push_plurals
+  end
+
   def ignore_plurals
-    batch = []
     return unless CONFIG['ignore_plurals']
     tmp_index.browse do |src|
       puts "[Plurals] #{src['query']}"
@@ -84,7 +104,7 @@ class SuggestionsIndex
         ignorePlurals: CONFIG['ignore_plurals']
       )['hits'][0]
       if src['query'] != res['query']
-        batch.push(
+        add_plural(
           action: 'partialUpdateObject',
           objectID: res['query'],
           body: {
@@ -94,7 +114,7 @@ class SuggestionsIndex
             }
           }
         )
-        batch.push(
+        add_plural(
           action: 'deleteObject',
           body: {
             objectID: src['query']
@@ -102,6 +122,6 @@ class SuggestionsIndex
         )
       end
     end
-    tmp_index.batch! requests: batch
+    push_plurals
   end
 end

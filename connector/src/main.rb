@@ -11,7 +11,6 @@ require 'pry'
 
 require_relative './config.rb'
 require_relative './analytics.rb'
-require_relative './external.rb'
 require_relative './suggestions_index.rb'
 require_relative './source_index.rb'
 require_relative './search_string.rb'
@@ -46,11 +45,10 @@ def transform_facets_exact_count idx, rep
 end
 
 def add_to_target_index idx, type, suggestions, primary_index = false
-  current = []
   iter = suggestions.clone
   iter.each_with_index do |p, i|
     q = SearchString.clean(p['query'])
-    puts "[#{idx.name}][#{type}] Query #{i + 1} / #{iter.size}: \"#{q}\""
+    puts "[#{idx.name}]#{type} Query#{" #{i + 1} / #{iter.size}" if iter.size > 1}: \"#{q}\""
     q = idx.unprefixer.transform q
     next if q.blank?
     rep = idx.search_exact q
@@ -71,19 +69,12 @@ def add_to_target_index idx, type, suggestions, primary_index = false
         }
       }
     end
-    current.push(object)
-    suggestions.delete_at(i)
-    if (current.size % 1000).zero?
-      target_index.push current
-      current = []
-    end
+    target_index.add object
+    suggestions.delete_at i
   end
-  target_index.push current
 end
 
 def main
-  external = External.browse
-
   each_index do |idx, primary_index|
     popular = Analytics.popular_searches(
       idx.name,
@@ -93,15 +84,20 @@ def main
       tags: idx.config.analytics_tags.join(','),
       distinctIPCount: idx.config.distinct_by_ip
     )
-    add_to_target_index idx, 'Popular', popular, primary_index
+    add_to_target_index idx, '[Popular]', popular, primary_index
 
     next unless primary_index
 
-    add_to_target_index idx, 'Generated', idx.generated, primary_index
+    add_to_target_index idx, '[Generated]', idx.generated, primary_index
 
-    add_to_target_index idx, 'External', external, primary_index
+    idx.external do |external|
+      external.browse do |hit|
+        add_to_target_index idx, "[External][#{external.index_name}]", [hit], primary_index
+      end
+    end
   end
 
+  target_index.push
   target_index.ignore_plurals
   target_index.move_tmp
 end

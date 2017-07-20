@@ -23,17 +23,20 @@ Here is an example:
   "indices": [{
     "name": "products",
     "replicas": true,
-    "min_letters": 4,
-    "min_hits": 20,
-    "facets": [
-      { "attribute": "brand", "amount": 1 },
-      { "attribute": "categories", "amount": 2 }
-    ],
     "generate": [
       ["brand"],
       ["type"],
       ["categories"],
       ["brand", "type"]
+    ],
+    "external": [
+      "alternate_analytics_source_index"
+    ],
+    "min_letters": 4,
+    "min_hits": 20,
+    "facets": [
+      { "attribute": "brand", "amount": 1 },
+      { "attribute": "categories", "amount": 2 }
     ]
   }, {
     "name": "blog_posts"
@@ -51,14 +54,6 @@ Here is an example:
 - `target_api_key`
 
 Useful if you want to use a different application for the source than for the destination.
-
-### External
-
-- `external`: Name of the index you want to use
-- [Optional] `external_app`: It accepts either `"source"` or `"target"` (See [Credentials](#credentials))
-
-You can use an external index to populate your index.  
-This can be useful when you have an external source for analytics, for instance Google Analytics.
 
 ### Exclude
 
@@ -131,6 +126,14 @@ Generates:
 - "samsung smartphone"
 - "apple tv"
 - "samsung tv"
+
+### External
+
+- `external`: Array of indices you want to use.
+- [Optional] `external_source`: Accepts either `"source"` or `"target"` (See [Credentials](#credentials))
+
+You can use an external index to populate your index.  
+This can be useful when you have an external source for analytics, for instance Google Analytics.
 
 ### Expansion
 

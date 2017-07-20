@@ -25,6 +25,13 @@ CONFIG['indices'].each do |idx|
   idx_param idx, 'generate', []
   idx_param idx, 'query_type', nil
 
+  idx_param idx, 'external', []
+  idx['external'].map! do |external|
+    next { 'name' => external } if external.is_a?(String)
+    external
+  end
+  idx_param idx, 'external_source', nil
+
   idx_param idx, 'facets', []
 
   idx_param idx, 'min_hits', 5

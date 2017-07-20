@@ -3,6 +3,7 @@ require 'damerau-levenshtein'
 
 require_relative './config.rb'
 require_relative './generator.rb'
+require_relative './external.rb'
 require_relative './unprefixer.rb'
 
 class SourceIndex
@@ -71,6 +72,14 @@ class SourceIndex
       res += Generator.new(self, facets).generate
     end
     res
+  end
+
+  def external &_block
+    raise ArgumentError, 'Missing block' unless block_given?
+    source = config.external_source
+    config.external.each do |external|
+      yield External.new(external['name'], source)
+    end
   end
 
   def ignore q
