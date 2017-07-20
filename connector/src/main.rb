@@ -64,6 +64,7 @@ def add_to_target_index idx, type, suggestions, primary_index = false
     }
     if primary_index
       object[idx.name.to_sym] = {
+        exact_nb_hits: rep['nbHits'],
         facets: {
           exact_matches: transform_facets_exact_count(idx, rep)
         }
