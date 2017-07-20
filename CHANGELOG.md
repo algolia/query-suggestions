@@ -1,3 +1,14 @@
+<a name="1.12.0"></a>
+# [1.12.0](https://github.com/algolia/query-suggestions/compare/v1.11.2...v1.12.0) (2017-07-20)
+
+
+### Features
+
+* **analytics:** add analytics_days ([b3d28a4](https://github.com/algolia/query-suggestions/commit/b3d28a4))
+* **external:** move external to an index config ([9128535](https://github.com/algolia/query-suggestions/commit/9128535))
+
+
+
 <a name="1.11.2"></a>
 ## [1.11.2](https://github.com/algolia/query-suggestions/compare/v1.11.1...v1.11.2) (2017-07-13)
 
