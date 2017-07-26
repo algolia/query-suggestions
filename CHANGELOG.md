@@ -1,3 +1,13 @@
+<a name="1.14.0"></a>
+# [1.14.0](https://github.com/algolia/query-suggestions/compare/v1.13.0...v1.14.0) (2017-07-26)
+
+
+### Features
+
+* **SuggestionsIndex:** add analytics facets ([a8d8995](https://github.com/algolia/query-suggestions/commit/a8d8995))
+
+
+
 <a name="1.13.0"></a>
 # [1.13.0](https://github.com/algolia/query-suggestions/compare/v1.12.0...v1.13.0) (2017-07-20)
 
