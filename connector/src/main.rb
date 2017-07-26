@@ -44,6 +44,18 @@ def transform_facets_exact_count idx, rep
   end.to_h
 end
 
+def transform_facets_analytics idx, rep
+  values = rep['topRefinements'] || {}
+  idx.config.facets.map do |facet|
+    attr = facet['attribute']
+    res = values[attr] || []
+    [
+      attr,
+      res.first(facet['amount'])
+    ]
+  end.to_h
+end
+
 def add_to_target_index idx, type, suggestions, primary_index = false
   iter = suggestions.clone
   iter.each_with_index do |p, i|
@@ -62,11 +74,12 @@ def add_to_target_index idx, type, suggestions, primary_index = false
         _operation: 'Increment'
       }
     }
-    if primary_index
+    if primary_index && q == p['query']
       object[idx.name.to_sym] = {
         exact_nb_hits: rep['nbHits'],
         facets: {
-          exact_matches: transform_facets_exact_count(idx, rep)
+          exact_matches: transform_facets_exact_count(idx, rep),
+          analytics: transform_facets_analytics(idx, p)
         }
       }
     end

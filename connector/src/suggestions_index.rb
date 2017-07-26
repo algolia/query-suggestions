@@ -86,6 +86,35 @@ class SuggestionsIndex
     push_plurals
   end
 
+  def recompute_plural first, second
+    res = {
+      query: first['query'],
+      popularity: first['popularity'] + second['popularity'],
+      nb_words: first['nb_words']
+    }
+    (first.keys + second.keys - %w(query popularity nb_words objectID)).each do |idx_name|
+      res[idx_name] = {
+        facets: {
+          exact_matches: (first[idx_name]['facets']['exact_matches'] rescue {}),
+          analytics: {}
+        }
+      }
+      res[idx_name][:exact_nb_hits] = first[idx_name.to_s]['exact_nb_hits'] rescue 0
+      SourceIndex.new(idx_name).config.facets.each do |facet|
+        res[idx_name][:facets][:analytics][facet['attribute']] = (
+         (first[idx_name]['facets']['analytics'][facet['attribute']] rescue []) +
+         (second[idx_name]['facets']['analytics'][facet['attribute']] rescue [])
+        ).reduce([]) do |final, current|
+          item = final.find { |o| o['value'] == current['value'] }
+          item['count'] += current['count'] if item
+          final << current unless item
+          final
+        end
+      end
+    end
+    res
+  end
+
   def ignore_plurals
     return unless CONFIG['ignore_plurals']
     tmp_index.browse do |src|
@@ -107,12 +136,7 @@ class SuggestionsIndex
         add_plural(
           action: 'partialUpdateObject',
           objectID: res['query'],
-          body: {
-            popularity: {
-              value: src['popularity'],
-              _operation: 'Increment'
-            }
-          }
+          body: recompute_plural(res, src)
         )
         add_plural(
           action: 'deleteObject',
