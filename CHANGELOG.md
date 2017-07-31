@@ -1,3 +1,13 @@
+<a name="1.14.1"></a>
+## [1.14.1](https://github.com/algolia/query-suggestions/compare/v1.14.0...v1.14.1) (2017-07-31)
+
+
+### Bug Fixes
+
+* **unprefixer:** add suport for hash highlighted objects ([3fd0a3a](https://github.com/algolia/query-suggestions/commit/3fd0a3a))
+
+
+
 <a name="1.14.0"></a>
 # [1.14.0](https://github.com/algolia/query-suggestions/compare/v1.13.0...v1.14.0) (2017-07-26)
 
