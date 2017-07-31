@@ -37,9 +37,16 @@ class Unprefixer
     {index: @searchable.size, ordered: true}
   end
 
+  def highlight_leaves obj
+    return obj if obj.is_a?(Hash) && !obj['matchedWords'].nil?
+    return obj.values.map { |val| highlight_leaves(val) }.flatten if obj.is_a?(Hash)
+    [obj].flatten.map { |elt| highlight_leaves(elt) }.flatten
+  end
+
   def highlight_strings rep, word
     rep['hits'].flat_map do |h|
       h['_highlightResult'].flat_map do |attr, arr|
+        arr = highlight_leaves(arr) if arr.is_a?(Hash)
         [arr].flatten.map do |obj|
           next nil unless (obj['matchedWords'] || []).include? word
           [find_searchable(attr), obj['value']]
