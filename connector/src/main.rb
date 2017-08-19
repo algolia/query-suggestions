@@ -59,7 +59,7 @@ end
 def add_to_target_index idx, type, suggestions, primary_index = false
   iter = suggestions.clone
   iter.each_with_index do |p, i|
-    q = SearchString.clean(p['query'])
+    q = SearchString.clean(p['query'].to_s)
     puts "[#{idx.name}]#{type} Query#{" #{i + 1} / #{iter.size}" if iter.size > 1}: \"#{q}\""
     q = idx.unprefixer.transform q
     next if q.blank?
@@ -70,11 +70,11 @@ def add_to_target_index idx, type, suggestions, primary_index = false
       query: q,
       nb_words: q.split(' ').size,
       popularity: {
-        value: p['count'],
+        value: p['count'].to_i,
         _operation: 'Increment'
       }
     }
-    if primary_index && q == p['query']
+    if primary_index && q == p['query'].to_s
       object[idx.name.to_sym] = {
         exact_nb_hits: rep['nbHits'],
         facets: {
