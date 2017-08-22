@@ -1,2 +1,3 @@
 /node_modules/
 /connector/run.sh
+/connector/run_*
