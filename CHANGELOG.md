@@ -1,3 +1,13 @@
+<a name="1.14.2"></a>
+## [1.14.2](https://github.com/algolia/query-suggestions/compare/v1.14.1...v1.14.2) (2017-08-24)
+
+
+### Bug Fixes
+
+* **SuggestionsIndex:** remove wrong attributes to retrieve ([20791ad](https://github.com/algolia/query-suggestions/commit/20791ad))
+
+
+
 <a name="1.14.1"></a>
 ## [1.14.1](https://github.com/algolia/query-suggestions/compare/v1.14.0...v1.14.1) (2017-07-31)
 
