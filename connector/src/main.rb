@@ -74,7 +74,7 @@ def add_to_target_index idx, type, suggestions, primary_index = false
         _operation: 'Increment'
       }
     }
-    if primary_index && q == p['query'].to_s
+    if primary_index
       object[idx.name.to_sym] = {
         exact_nb_hits: rep['nbHits'],
         facets: {
