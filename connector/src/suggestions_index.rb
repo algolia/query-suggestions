@@ -124,7 +124,6 @@ class SuggestionsIndex
         hitsPerPage: 1,
         analytics: false,
         numericFilters: "nb_words=#{src['query'].split(' ').count}",
-        attributesToRetrieve: %w(query popularity),
         attributesToHighlight: [],
         attributesToSnippet: [],
         queryType: 'prefixNone',
