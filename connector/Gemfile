@@ -1,7 +1,7 @@
 source 'https://rubygems.org/'
 
-gem 'httpclient', '~> 2.8.2.4'
-gem 'algoliasearch'
+gem 'httpclient', '~> 2.8.3'
+gem 'algoliasearch', '~> 1.15'
 gem 'activesupport'
 gem 'damerau-levenshtein', '~> 1.1'
 gem 'pry'
