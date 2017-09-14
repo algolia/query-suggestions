@@ -1,3 +1,13 @@
+<a name="1.14.4"></a>
+## [1.14.4](https://github.com/algolia/query-suggestions/compare/v1.14.3...v1.14.4) (2017-09-14)
+
+
+### Bug Fixes
+
+* **config:** grab global exclude if sub list is empty ([44c91ba](https://github.com/algolia/query-suggestions/commit/44c91ba))
+
+
+
 <a name="1.14.3"></a>
 ## [1.14.3](https://github.com/algolia/query-suggestions/compare/v1.14.2...v1.14.3) (2017-08-28)
 
