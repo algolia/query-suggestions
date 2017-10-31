@@ -48,6 +48,7 @@ class Unprefixer
       h['_highlightResult'].flat_map do |attr, arr|
         arr = highlight_leaves(arr) if arr.is_a?(Hash)
         [arr].flatten.map do |obj|
+          next nil unless (obj['matchedWords'] || []).include? word
           [find_searchable(attr), obj['value']]
         end.compact
       end
@@ -97,15 +98,17 @@ class Unprefixer
   end
 
   def check_prefix q, only_last
-    rep = @source.search_approx(q)
+    rep = @source.search_approx(q, getRankingInfo: 1)
     return nil if rep['nbHits'] < @source.config.min_hits
     splitted = q.split(/\s+/)
+    normalized_splitted = rep['parsedQuery'].split(/\s+/)
+    raise if normalized_splitted.size != splitted.size
     res = []
     splitted.each_with_index do |word, i|
       if only_last && i != splitted.size - 1
         res.push(word)
       else
-        res.push best_candidate_word(word, rep)
+        res.push best_candidate_word(normalized_splitted[i], rep)
       end
     end
     res.join(' ')

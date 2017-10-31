@@ -109,7 +109,7 @@ class SourceIndex
     )
   end
 
-  def search_approx query
+  def search_approx query, extra = {}
     index.search(
       query,
       SEARCH_PARAMETERS.merge(
@@ -117,7 +117,7 @@ class SourceIndex
         queryType: config.query_type,
         highlightPreTag: '<HIGHLIGHT>',
         highlightPostTag: '</HIGHLIGHT>'
-      )
+      ).merge(extra)
     )
   end
 
