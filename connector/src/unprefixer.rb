@@ -48,7 +48,6 @@ class Unprefixer
       h['_highlightResult'].flat_map do |attr, arr|
         arr = highlight_leaves(arr) if arr.is_a?(Hash)
         [arr].flatten.map do |obj|
-          next nil unless (obj['matchedWords'] || []).include? word
           [find_searchable(attr), obj['value']]
         end.compact
       end
