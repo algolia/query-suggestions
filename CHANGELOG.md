@@ -1,3 +1,13 @@
+<a name="1.14.6"></a>
+## [1.14.6](https://github.com/algolia/query-suggestions/compare/v1.14.5...v1.14.6) (2017-10-31)
+
+
+### Bug Fixes
+
+* **unprefixer:** improve the matchedWords handling ([c1ec6ee](https://github.com/algolia/query-suggestions/commit/c1ec6ee))
+
+
+
 <a name="1.14.5"></a>
 ## [1.14.5](https://github.com/algolia/query-suggestions/compare/v1.14.4...v1.14.5) (2017-10-31)
 
