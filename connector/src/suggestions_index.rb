@@ -8,7 +8,7 @@ class SuggestionsIndex
     attributesToIndex: %w(query),
     customRanking: %w(desc(popularity)),
     attributesToHighlight: %w(query),
-    numericAttributesToIndex: []
+    numericAttributesToIndex: %w(nb_words)
   }.freeze
 
   def self.client
@@ -29,7 +29,8 @@ class SuggestionsIndex
   end
 
   def initialize
-    tmp_index.set_settings!({})
+    tmp_index.delete!
+    tmp_index.set_settings!(DEFAULT_SETTINGS)
     @records = []
     @plurals = []
   end
