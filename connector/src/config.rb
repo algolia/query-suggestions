@@ -47,3 +47,4 @@ end
 
 CONFIG['ignore_plurals'] ||= false
 CONFIG['debug'] ||= false
+CONFIG['parallel'] ||= 0

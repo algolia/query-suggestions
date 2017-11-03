@@ -5,6 +5,9 @@ require 'active_support/core_ext/object/json'
 
 require 'json'
 
+require 'thread'
+require 'parallel'
+
 # Debug
 require_relative './debug.rb'
 require 'yaml'
@@ -59,8 +62,9 @@ end
 
 
 def add_to_target_index idx, type, suggestions, primary_index = false
-  iter = suggestions.clone
-  iter.each_with_index do |p, i|
+  iter = suggestions.clone.each_with_index
+  mutex = Mutex.new
+  Parallel.each(iter, in_threads: CONFIG['parallel']) do |(p, i)|
     debug = Debug.new
 
     q = p['query'].to_s
@@ -112,8 +116,10 @@ def add_to_target_index idx, type, suggestions, primary_index = false
 
     object[:_debug] = { _operation: 'Add', value: debug.entries } if CONFIG['debug']
 
-    target_index.add object
-    suggestions.delete_at i
+    mutex.synchronize do
+      target_index.add object
+      suggestions.delete_at i
+    end
   end
 end
 
