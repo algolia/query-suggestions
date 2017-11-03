@@ -1,3 +1,18 @@
+<a name="1.15.0"></a>
+# [1.15.0](https://github.com/algolia/query-suggestions/compare/v1.14.6...v1.15.0) (2017-11-03)
+
+
+### Bug Fixes
+
+* **suggestions_index:** correctly initialize the temporary index ([c86a715](https://github.com/algolia/query-suggestions/commit/c86a715))
+
+
+### Features
+
+* **connector:** add debug option to the config ([71343fd](https://github.com/algolia/query-suggestions/commit/71343fd))
+
+
+
 <a name="1.14.6"></a>
 ## [1.14.6](https://github.com/algolia/query-suggestions/compare/v1.14.5...v1.14.6) (2017-10-31)
 
