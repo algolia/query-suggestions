@@ -46,3 +46,4 @@ CONFIG['indices'].each do |idx|
 end
 
 CONFIG['ignore_plurals'] ||= false
+CONFIG['debug'] ||= false

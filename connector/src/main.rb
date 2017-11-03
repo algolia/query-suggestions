@@ -6,6 +6,7 @@ require 'active_support/core_ext/object/json'
 require 'json'
 
 # Debug
+require_relative './debug.rb'
 require 'yaml'
 require 'pry'
 
@@ -56,33 +57,64 @@ def transform_facets_analytics idx, rep
   end.to_h
 end
 
+
 def add_to_target_index idx, type, suggestions, primary_index = false
   iter = suggestions.clone
   iter.each_with_index do |p, i|
-    q = SearchString.clean(p['query'].to_s)
+    debug = Debug.new
+
+    q = p['query'].to_s
+    pop = p['count'].to_i
+    debug.add 'Initial', "#{type} \"#{q}\" - #{pop}", index: idx
+
+    q = SearchString.clean(q)
+    debug.add 'Clean', "\"#{q}\"", index: idx
+
     puts "[#{idx.name}]#{type} Query#{" #{i + 1} / #{iter.size}" if iter.size > 1}: \"#{q}\""
+
     q = idx.unprefixer.transform q
-    next if q.blank?
+    debug.add 'Unprefixed', "\"#{q}\"", index: idx
+    if q.blank?
+      debug.add 'Skipped', "Skipped because unprefixer didn't work", index: idx
+      next
+    end
+
     rep = idx.search_exact q
-    next if rep['nbHits'] < idx.config.min_hits
+    debug.add 'nbExactHits', rep['nbHits'], index: idx
+    if rep['nbHits'] < idx.config.min_hits
+      debug.add 'Skip', "Skipped because min_hits = #{idx.config.min_hits}", index: idx
+      next
+    end
+
     object = {
       objectID: q,
       query: q,
       nb_words: q.split(' ').size,
       popularity: {
-        value: p['count'].to_i,
+        value: pop,
         _operation: 'Increment'
       }
     }
+
     if primary_index
-      object[idx.name.to_sym] = {
-        exact_nb_hits: rep['nbHits'],
-        facets: {
-          exact_matches: transform_facets_exact_count(idx, rep),
-          analytics: transform_facets_analytics(idx, p)
+      idx_information = {
+        idx.name.to_sym => {
+          exact_nb_hits: rep['nbHits'],
+          facets: {
+            exact_matches: transform_facets_exact_count(idx, rep),
+            analytics: transform_facets_analytics(idx, p)
+          }
         }
       }
+      object.merge!(idx_information)
+      debug.add 'Facets', 'Values', index: idx, extra: idx_information
     end
+
+    object[:_debug] = {
+      _operation: 'Add',
+      value: debug.entries
+    }
+
     target_index.add object
     suggestions.delete_at i
   end

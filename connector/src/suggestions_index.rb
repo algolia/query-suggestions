@@ -1,6 +1,7 @@
 require 'algoliasearch'
 
 require_relative './config.rb'
+require_relative './debug.rb'
 
 class SuggestionsIndex
   DEFAULT_SETTINGS = {
@@ -87,12 +88,18 @@ class SuggestionsIndex
   end
 
   def recompute_plural first, second
+    debug = Debug.new
+    debug.add 'Ignore plurals', "Replace \"#{second['query']}\"", extra: second
     res = {
+      _debug: {
+        _operation: 'Add',
+        value: debug.entries
+      },
       query: first['query'],
       popularity: first['popularity'] + second['popularity'],
       nb_words: first['nb_words']
     }
-    (first.keys + second.keys - %w(query popularity nb_words objectID)).each do |idx_name|
+    (first.keys + second.keys - %w(query popularity nb_words objectID _debug)).each do |idx_name|
       res[idx_name] = {
         facets: {
           exact_matches: (first[idx_name]['facets']['exact_matches'] rescue {}),

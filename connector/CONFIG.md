@@ -55,6 +55,12 @@ Here is an example:
 
 Useful if you want to use a different application for the source than for the destination.
 
+### Debug
+
+- `debug` - Default: `false`
+
+Add a `_debug` field to every generated record to get extra information about what happened to it
+
 ### Exclude
 
 - `exclude` - Default: `[]`
