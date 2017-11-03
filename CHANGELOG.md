@@ -1,3 +1,18 @@
+<a name="1.16.0"></a>
+# [1.16.0](https://github.com/algolia/query-suggestions/compare/v1.15.0...v1.16.0) (2017-11-03)
+
+
+### Bug Fixes
+
+* **debug:** remove the _debug field when debug is off ([b1e3b24](https://github.com/algolia/query-suggestions/commit/b1e3b24))
+
+
+### Features
+
+* **parallel:** allow to run a config with queries sent in parallel ([32912d9](https://github.com/algolia/query-suggestions/commit/32912d9))
+
+
+
 <a name="1.15.0"></a>
 # [1.15.0](https://github.com/algolia/query-suggestions/compare/v1.14.6...v1.15.0) (2017-11-03)
 
