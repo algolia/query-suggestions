@@ -92,14 +92,11 @@ class SuggestionsIndex
     debug = Debug.new
     debug.add 'Ignore plurals', "Replace \"#{second['query']}\"", extra: second
     res = {
-      _debug: {
-        _operation: 'Add',
-        value: debug.entries
-      },
       query: first['query'],
       popularity: first['popularity'] + second['popularity'],
       nb_words: first['nb_words']
     }
+    res[:_debug] = { _operation: 'Add', value: debug.entries } if CONFIG['debug']
     (first.keys + second.keys - %w(query popularity nb_words objectID _debug)).each do |idx_name|
       res[idx_name] = {
         facets: {

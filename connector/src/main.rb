@@ -110,10 +110,7 @@ def add_to_target_index idx, type, suggestions, primary_index = false
       debug.add 'Facets', 'Values', index: idx, extra: idx_information
     end
 
-    object[:_debug] = {
-      _operation: 'Add',
-      value: debug.entries
-    }
+    object[:_debug] = { _operation: 'Add', value: debug.entries } if CONFIG['debug']
 
     target_index.add object
     suggestions.delete_at i
