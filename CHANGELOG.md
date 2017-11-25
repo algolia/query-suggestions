@@ -1,3 +1,13 @@
+<a name="1.16.1"></a>
+## [1.16.1](https://github.com/algolia/query-suggestions/compare/v1.16.0...v1.16.1) (2017-11-25)
+
+
+### Bug Fixes
+
+* **unprefixer:** disable unprefixing for kanjis ([2a434d8](https://github.com/algolia/query-suggestions/commit/2a434d8))
+
+
+
 <a name="1.16.0"></a>
 # [1.16.0](https://github.com/algolia/query-suggestions/compare/v1.15.0...v1.16.0) (2017-11-03)
 
