@@ -102,7 +102,7 @@ class Unprefixer
     return nil if rep['nbHits'] < @source.config.min_hits
     splitted = q.split(/\s+/)
     normalized_splitted = rep['parsedQuery'].split(/\s+/)
-    raise if normalized_splitted.size != splitted.size
+    return q if normalized_splitted.size != splitted.size
     res = []
     splitted.each_with_index do |word, i|
       if only_last && i != splitted.size - 1
