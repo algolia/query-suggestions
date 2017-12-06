@@ -60,7 +60,6 @@ def transform_facets_analytics idx, rep
   end.to_h
 end
 
-
 def add_to_target_index idx, type, suggestions, primary_index = false
   iter = suggestions.clone.each_with_index
   mutex = Mutex.new

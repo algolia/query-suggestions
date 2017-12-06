@@ -2,6 +2,7 @@ require 'algoliasearch'
 
 require_relative './config.rb'
 require_relative './debug.rb'
+require_relative './user_agent.rb'
 
 class SuggestionsIndex
   DEFAULT_SETTINGS = {
@@ -12,10 +13,13 @@ class SuggestionsIndex
   }.freeze
 
   def self.client
-    @client ||= Algolia::Client.new(
+    return @client unless @client.nil?
+    @client = Algolia::Client.new(
       application_id: application_id,
       api_key: api_key
     )
+    @client.set_extra_header 'User-Agent', UserAgent.to_s
+    @client
   end
 
   def self.application_id

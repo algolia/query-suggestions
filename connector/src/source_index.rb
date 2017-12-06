@@ -5,6 +5,7 @@ require_relative './config.rb'
 require_relative './generator.rb'
 require_relative './external.rb'
 require_relative './unprefixer.rb'
+require_relative './user_agent.rb'
 
 class SourceIndex
   APPROX_RATIO = 4
@@ -18,10 +19,13 @@ class SourceIndex
   }.freeze
 
   def self.client
-    @client ||= Algolia::Client.new(
+    return @client unless @client.nil?
+    @client = Algolia::Client.new(
       application_id: application_id,
       api_key: api_key
     )
+    @client.set_extra_header 'User-Agent', UserAgent.to_s
+    @client
   end
 
   def self.application_id
