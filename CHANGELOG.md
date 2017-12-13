@@ -1,3 +1,13 @@
+<a name="1.17.1"></a>
+## [1.17.1](https://github.com/algolia/query-suggestions/compare/v1.17.0...v1.17.1) (2017-12-13)
+
+
+### Bug Fixes
+
+* **generator:** correct mishandled nested facets ([8e96c7d](https://github.com/algolia/query-suggestions/commit/8e96c7d))
+
+
+
 <a name="1.17.0"></a>
 # [1.17.0](https://github.com/algolia/query-suggestions/compare/v1.16.1...v1.17.0) (2017-12-06)
 
