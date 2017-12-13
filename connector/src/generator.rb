@@ -23,7 +23,7 @@ class Generator
     return values.map { |v| SearchString.clean(v) } if i + 1 == @facets.size
     res = []
     values.each do |val|
-      new_filters = "#{' AND ' if filters != ''}#{name}:\"#{val}\""
+      new_filters = "#{filters}#{' AND ' if filters != ''}#{name}:\"#{val}\""
       clean_val = SearchString.clean val
       nested = generate_rec i + 1, new_filters
       nested.each do |nested_val|
