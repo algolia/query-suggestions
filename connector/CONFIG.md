@@ -4,8 +4,8 @@ The `run` script accepts four environment variables:
 - `APPLICATION_ID`: Your [Algolia application ID][api_keys_page]
 - `API_KEY`: Your [Admin API key][api_keys_page]
 - `INDEX_PREFIX`: A prefix you want to use for the index name.
-  If for instance, you used `prod_` here, the generated index would be called `prod_query_suggestions`.
-- `CONFIG`: A JSON object containing all configuration options
+  If for instance, you used `prod_` here, the generated index would be called `prod_query_suggestions`. If this is not specified, the name will default to `query_suggestions`.
+- `CONFIG`: The file name of a JSON object containing all configuration options
 
 [api_keys_page]: https://www.algolia.com/api-keys
 
@@ -53,27 +53,27 @@ Here is an example:
 - `target_app_id`
 - `target_api_key`
 
-Useful if you want to use a different application for the source than for the destination.
+Useful if you want to use a different application for the source than for the destination. ??? In this context, is source the suggestions index and target the main index???
 
 ### Debug
 
 - `debug` - Default: `false`
 
-Add a `_debug` field to every generated record to get extra information about what happened to it
+Add a `_debug` field to every generated record to get extra information about what happened to it.
 
 ### Exclude
 
 - `exclude` - Default: `[]`
 
 You can use regexes to ignore some queries.
-If a query matches any regex in this list, it will simply be skipped.
+If, during an upload of external data, a query matches any regex in this list, it will be skipped.
 
 ### Ignore plurals
 
 - `ignore_plurals`
 
 Accepts all available values for [`ignorePlurals`][ignore_plurals] in the API.  
-Used to deduplicate between "chat bot" and "chat bots" for instance.
+Used to treat singular and plural forms the same, "chat bot" = "chat bots" for instance.
 We'll keep only the most popular of the two, the other one inherits from its popularity.
 
 [ignore_plurals]: https://www.algolia.com/doc/api-reference/api-parameters/ignorePlurals/
