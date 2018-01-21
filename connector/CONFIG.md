@@ -1,15 +1,7 @@
 # Introduction
 
-The `run` script accepts four environment variables:
-- `APPLICATION_ID`: Your [Algolia application ID][api_keys_page]
-- `API_KEY`: Your [Admin API key][api_keys_page]
-- `INDEX_PREFIX`: A prefix you want to use for the index name.
-  If for instance, you used `prod_` here, the generated index would be called `prod_query_suggestions`. If this is not specified, the name will default to `query_suggestions`.
-- `CONFIG`: The file name of a JSON object containing all configuration options
+The configuration file contains Query Suggestions needs in order to function - index names, settings, excluded queries, facets, and more. 
 
-[api_keys_page]: https://www.algolia.com/api-keys
-
-In this file, we'll describe the configuration object in `CONFIG`.  
 Here is an example:
 
 ```json
@@ -44,6 +36,19 @@ Here is an example:
 }
 ```
 
+### Running the configuration file
+
+Once you've setup the configuration file, you need to execute it with the run command. ???When do we use "run"?
+
+The `run` script accepts four environment variables:
+- `APPLICATION_ID`: Your [Algolia application ID][api_keys_page]
+- `API_KEY`: Your [Admin API key][api_keys_page]
+- `INDEX_PREFIX`: A prefix you want to use for the index name.
+  If, for example, you used `prod_` here, the generated index would be called `prod_query_suggestions`. If this variable is not set, the name will default to `query_suggestions`. ???is that true?
+- `CONFIG`: The file name of the JSON configuration file
+
+[api_keys_page]: https://www.algolia.com/api-keys
+
 ## Global options
 
 ### Credentials
@@ -53,7 +58,7 @@ Here is an example:
 - `target_app_id`
 - `target_api_key`
 
-Useful if you want to use a different application for the source than for the destination. ??? In this context, is source the suggestions index and target the main index???
+Useful if you want to use an application for the *source* that differs from the *destination*. ???In this context, is source the suggestions index and target the main index?
 
 ### Debug
 
@@ -65,18 +70,18 @@ Add a `_debug` field to every generated record to get extra information about wh
 
 - `exclude` - Default: `[]`
 
-Here, you can add a list of words and phrases that are used to exclude full queries. If, during an upload of external data,  a query fully matches a word or phrase in this list, it will be skipped.
+Here, you can add a list of words and phrases that must be ignored: if a query *fully* matches a word or phrase in this list, it will be skipped.
 
-Additionally, you can use regexes to ignore a query that contains an undesirable set of characters.
-If any part of a query matches a regex in this list, it will be skipped.
+Additionally, you can use regexes to ignore any query that *contains* a certain set of characters:
+if any part of a query matches a regex in this list, it will be skipped.
 
 ### Ignore plurals
 
 - `ignore_plurals`
 
 Accepts all available values for [`ignorePlurals`][ignore_plurals] in the API.  
-Used to treat singular and plural forms the same, "chat bot" = "chat bots" for instance.
-We'll keep only the most popular of the two, the other one inherits from its popularity.
+This is used to treat singular and plural forms the same, "chat bot" = "chat bots" for instance.
+We'll keep only the most popular of the two; we combine their popularity scores.
 
 [ignore_plurals]: https://www.algolia.com/doc/api-reference/api-parameters/ignorePlurals/
 
@@ -94,7 +99,7 @@ Index name.
 
 - `replicas`: `true|false` - Default: `true`
 
-Whether to use analytics of the replicas indices too.
+Whether to use the analytics of the replicas indices too.
 
 ### Analytics
 
@@ -102,12 +107,12 @@ Whether to use analytics of the replicas indices too.
 - `analytics_days` - Default: `90`
 - `distinct_by_ip` - Default: false
 
-Analytics tags can be used to restrict the analytics we use to only a subset of your users usage.
-Can be useful to distinguish between different sections of your website that both target the same index (e.g. homepage vs blog).
+Analytics tags can be used to restrict the analytics we use to only a subset of your users' usage.
+This can be useful to distinguish between different sections of your website that both target the same index (e.g. homepage vs blog).
 
-`distinct_by_ip` allows to prevent a user spamming a query and making it come up in the suggestions list. Resource intensive, might timeout.
+`distinct_by_ip` allows you to prevent a user from spamming a query and thereby making it more popular in the suggestions list. ???Be careful, this is resource intensive, could cause a timeout.
 
-### Generation
+### Generating queries
 
 - `generate` - Default: `[]`
 
@@ -135,20 +140,20 @@ Generates:
 - "apple tv"
 - "samsung tv"
 
-### External
+### External Sources
 
 - `external`: Array of indices you want to use.
-- [Optional] `external_source`: Accepts either `"source"` or `"target"` (See [Credentials](#credentials))
+- [Optional] `external_source`: Accepts either `"source"` or `"target"` (See [Credentials](#credentials)). ???If not specified, it uses the source of the main index.
 
 You can use an external index to populate your index.  
 This can be useful when you have an external source for analytics, for instance Google Analytics.
 
-### Expansion
+### Expansion???
 
 - `query_type`: `null|"prefixLast"|"prefixAll"|"prefixNone"` - Default: `null`
 
 Algolia analytics contain mostly prefixes.
-To still provide relevant queries to your users, we can try to interpolate which words the user were meaning with those prefixes.
+To still provide relevant queries to your users, we can try to interpolate which words the user meant with those prefixes.
 When null, we use [the index setting][query_type] (the different options are also desribed in this link).
 
 [query_type]: https://www.algolia.com/doc/api-reference/api-parameters/queryType/
@@ -159,15 +164,15 @@ When null, we use [the index setting][query_type] (the different options are als
 - `min_letters` - Default: `4`
 - `exclude` - Default: `[]`
 
-Those options allow to avoid suggesting irrelevant queries.
+These options allow you to avoid suggesting irrelevant queries.
 
 ### Relevant facets
 
 - `facets` - Default: `[]`
 
-Used to create suggestions results with associated relevant categories.
+This is used to create suggestions associated relevant categories.
 
-Accepts objects with those values:
+???Accepts objects with those values:
 
 ```json
 {
