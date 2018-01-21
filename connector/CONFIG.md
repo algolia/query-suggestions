@@ -65,8 +65,10 @@ Add a `_debug` field to every generated record to get extra information about wh
 
 - `exclude` - Default: `[]`
 
-You can use regexes to ignore some queries.
-If, during an upload of external data, a query matches any regex in this list, it will be skipped.
+Here, you can add a list of words and phrases that are used to exclude full queries. If, during an upload of external data,  a query fully matches a word or phrase in this list, it will be skipped.
+
+Additionally, you can use regexes to ignore a query that contains an undesirable set of characters.
+If any part of a query matches a regex in this list, it will be skipped.
 
 ### Ignore plurals
 
