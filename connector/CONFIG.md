@@ -1,8 +1,8 @@
 # Introduction
 
-The configuration file contains Query Suggestions needs in order to function - index names, settings, excluded queries, facets, and more. 
+The configuration file contains everyting that Query Suggestions needs in order to function - index names, settings, excluded queries, facets, and more. 
 
-Here is an example:
+## An example:
 
 ```json
 {
@@ -36,9 +36,9 @@ Here is an example:
 }
 ```
 
-### Running the configuration file
+## Running the configuration file
 
-Once you've setup the configuration file, you need to execute it with the run command. ???When do we use "run"?
+Once you've set up the configuration file, you need to execute it with the run command. ???When do we use "run"?
 
 The `run` script accepts four environment variables:
 - `APPLICATION_ID`: Your [Algolia application ID][api_keys_page]
@@ -58,7 +58,7 @@ The `run` script accepts four environment variables:
 - `target_app_id`
 - `target_api_key`
 
-Useful if you want to use an application for the *source* that differs from the *destination*. ???In this context, is source the suggestions index and target the main index?
+Useful if you want to use a different application for the *source* than for the *destination*. ???In this context, is source the suggestions index and target the main index?
 
 ### Debug
 
@@ -70,7 +70,7 @@ Add a `_debug` field to every generated record to get extra information about wh
 
 - `exclude` - Default: `[]`
 
-Here, you can add a list of words and phrases that must be ignored: if a query *fully* matches a word or phrase in this list, it will be skipped.
+Here, you can add a list of words and phrases that you want ignored: if a query *fully* matches a word or phrase in this list, it will be skipped.
 
 Additionally, you can use regexes to ignore any query that *contains* a certain set of characters:
 if any part of a query matches a regex in this list, it will be skipped.
@@ -81,7 +81,7 @@ if any part of a query matches a regex in this list, it will be skipped.
 
 Accepts all available values for [`ignorePlurals`][ignore_plurals] in the API.  
 This is used to treat singular and plural forms the same, "chat bot" = "chat bots" for instance.
-We'll keep only the most popular of the two; we combine their popularity scores.
+We'll keep only the most popular of the two, but we combine their popularity scores.
 
 [ignore_plurals]: https://www.algolia.com/doc/api-reference/api-parameters/ignorePlurals/
 
@@ -152,7 +152,7 @@ This can be useful when you have an external source for analytics, for instance 
 
 - `query_type`: `null|"prefixLast"|"prefixAll"|"prefixNone"` - Default: `null`
 
-Algolia analytics contain mostly prefixes.
+Algolia's analytics contain mostly prefixes.
 To still provide relevant queries to your users, we can try to interpolate which words the user meant with those prefixes.
 When null, we use [the index setting][query_type] (the different options are also desribed in this link).
 
@@ -164,19 +164,21 @@ When null, we use [the index setting][query_type] (the different options are als
 - `min_letters` - Default: `4`
 - `exclude` - Default: `[]`
 
-These options allow you to avoid suggesting irrelevant queries.
+These options gives you some control, allowing you to avoid suggesting irrelevant queries.
 
 ### Relevant facets
 
 - `facets` - Default: `[]`
 
-This is used to create suggestions associated relevant categories.
+This is used to create suggestions associated to relevant categories.
 
-???Accepts objects with those values:
+Here is an example:
 
 ```json
-{
-  "attribute": "brand",
-  "amount": "3"
-}
+"facets": [
+  {
+    "attribute": "brand",
+    "amount": "3"
+  }
+]
 ```
