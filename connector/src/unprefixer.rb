@@ -98,7 +98,7 @@ class Unprefixer
   end
 
   def check_prefix q, only_last
-    rep = @source.search_approx(q, getRankingInfo: 1)
+    rep = @source.search_approx(q, attributesToHighlight: '*', removeWordsIfNoResults: 'none', getRankingInfo: 1)
     return nil if rep['nbHits'] < @source.config.min_hits
     splitted = q.split(/\s+/)
     normalized_splitted = rep['parsedQuery'].split(/\s+/)
