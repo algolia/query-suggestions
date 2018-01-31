@@ -15,7 +15,9 @@ class SourceIndex
     hitsPerPage: 0,
     analytics: false,
     attributesToRetrieve: [],
-    attributesToSnippet: []
+    attributesToSnippet: [],
+    distinct: false,
+    facetingAfterDistinct: false
   }.freeze
 
   def self.client
