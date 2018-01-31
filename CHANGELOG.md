@@ -1,3 +1,8 @@
+<a name="1.17.3"></a>
+## [1.17.3](https://github.com/algolia/query-suggestions/compare/v1.17.2...v1.17.3) (2018-01-31)
+
+
+
 <a name="1.17.2"></a>
 ## [1.17.2](https://github.com/algolia/query-suggestions/compare/v1.17.1...v1.17.2) (2018-01-30)
 
