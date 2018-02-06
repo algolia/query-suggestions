@@ -53,15 +53,18 @@ The `run` script accepts four environment variables:
 
 ### Credentials
 
-- `source_app_id`
-- `source_api_key`
-- `target_app_id`
-- `target_api_key`
+This connector can be using Algolia's API on three applications.
+The default one's credentials are passed through the environment variables described above (`APPLICATION_ID`, `API_KEY`).
 
-Useful if you want to use a different application for the *source* than for the *destination*. 
+However, if you want to, you can pass custom credentials for:
+- the **source application**: the application where the source indices are stored, with their Analytics
+- the **target application**: the application where the query suggestions index will be created
 
-Source is where the main index lies, with its analytics.
-Target is where the query suggestions index will be generated.
+You can change those using those parameters:
+- [Optional] `source_app_id` - Default: `APPLICATION_ID` environment variable
+- [Optional] `source_api_key` - Default: `API_KEY` environment variable
+- [Optional] `target_app_id` - Default: `APPLICATION_ID` environment variable
+- [Optional] `target_api_key` - Default: `API_KEY` environment variable
 
 ### Debug
 
@@ -147,14 +150,9 @@ Generates:
 ### External Sources
 
 - `external`: Array of indices you want to use.
-- [Optional] `external_source`: Accepts either `"source"` or `"target"` (See [Credentials](#credentials)). 
+- [Optional] `external_source`: Accepts either `"source"` or `"target"` (See [Credentials](#credentials)).
 
 If the external source is not specified, it uses the app passed through the environment variables.
-You can have up to three different apps for this connector.
-
-- The one it runs on: defined through APPLICATION_ID and API_KEY environment variables
-- The source app: where the main index and its analytics lies (defaults to 1)
-- The target app: where the query suggestions index will be created (defaults to 1)
 
 You can use an external index to populate your index.  
 This can be useful when you have an external source for analytics, for instance Google Analytics.
