@@ -53,14 +53,14 @@ The `run` script accepts four environment variables:
 
 ### Credentials
 
-This connector can be using Algolia's API on three applications.
-The default one's credentials are passed through the environment variables described above (`APPLICATION_ID`, `API_KEY`).
+This connector can use Algolia's API on three applications.
+The default credentials are passed through the environment variables described above (`APPLICATION_ID`, `API_KEY`).
 
 However, if you want to, you can pass custom credentials for:
 - the **source application**: the application where the source indices are stored, with their Analytics
 - the **target application**: the application where the query suggestions index will be created
 
-You can change those using those parameters:
+You can change those using these parameters:
 - [Optional] `source_app_id` - Default: `APPLICATION_ID` environment variable
 - [Optional] `source_api_key` - Default: `API_KEY` environment variable
 - [Optional] `target_app_id` - Default: `APPLICATION_ID` environment variable
