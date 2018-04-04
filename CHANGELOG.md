@@ -1,3 +1,13 @@
+<a name="1.17.4"></a>
+## [1.17.4](https://github.com/algolia/query-suggestions/compare/v1.17.3...v1.17.4) (2018-04-04)
+
+
+### Bug Fixes
+
+* **analytics:** encode index name ([cc9a77d](https://github.com/algolia/query-suggestions/commit/cc9a77d))
+
+
+
 <a name="1.17.3"></a>
 ## [1.17.3](https://github.com/algolia/query-suggestions/compare/v1.17.2...v1.17.3) (2018-01-31)
 
