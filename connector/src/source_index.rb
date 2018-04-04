@@ -45,6 +45,9 @@ class SourceIndex
 
   def initialize name, inherited_config = {}
     @name = name
+
+    settings # Call settings instantly to raise ASAP if wrong permissions
+
     @inherited_config = JSON.parse(inherited_config.to_json)
     @unprefixer = Unprefixer.new(self)
   end
@@ -65,7 +68,20 @@ class SourceIndex
   def replicas
     return [] unless @config['replicas']
     replicas = settings['replicas'] || settings['slaves'] || []
-    replicas.map { |r| SourceIndex.new(r, config.to_h) }
+    replicas.map do |r|
+      begin
+        SourceIndex.new(r, config.to_h)
+      rescue Algolia::AlgoliaProtocolError => e
+        # Dashboard is creating an API key with index restrictions
+        # prefixed with the primary index's name
+        # So we skip replicas which don't start with the same name
+        if e.code == 403
+          puts 'Replica skipped because of wrong API key permissions'
+          next nil
+        end
+        raise
+      end
+    end.compact
   end
 
   def settings
