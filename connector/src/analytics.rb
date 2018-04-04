@@ -1,4 +1,5 @@
 require 'active_support/core_ext/object/to_query'
+require 'addressable/uri'
 
 require_relative './source_index.rb'
 
@@ -32,7 +33,10 @@ class Analytics
   def self.popular_searches index, params = {}
     protocol = 'https'
     host = 'analytics.algolia.com'
-    path = "/1/searches/#{index}/popular"
+    encoded_index = Addressable::URI.encode_component(
+      index, Addressable::URI::CharacterClasses::UNRESERVED
+    )
+    path = "/1/searches/#{encoded_index}/popular"
     response = Client.get "#{protocol}://#{host}#{path}?#{params.to_query}"
     response['topSearches']
   end
