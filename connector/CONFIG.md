@@ -157,6 +157,34 @@ If the external source is not specified, it uses the app passed through the envi
 You can use an external index to populate your index.  
 This can be useful when you have an external source for analytics, for instance Google Analytics.
 
+This index needs to contain values with this structure:
+
+```js
+{
+  "query": "iphone",
+  "count": "123"
+}
+```
+
+Optionally, if you're using [Relevant facets](#relevant-facets) you can also provide the facet values which were used the most with a query using `topRefinements`:
+
+```js
+{
+  "query": "iphone",
+  "count": "123",
+  "topRefinements": {
+    "type": [{
+      "value": "smartphones",
+      "count": 20
+    }, {
+      "value": "electronics",
+      "count": 10
+    }]
+  }
+}
+```
+
+
 ### Expansion
 
 - `query_type`: `null|"prefixLast"|"prefixAll"|"prefixNone"` - Default: `null`
