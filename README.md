@@ -1,3 +1,15 @@
+# Deprecation notice
+
+This repository will soon be removed and should not be used to build new projects.
+
+Algolia has introduced a new version of its Analytics service (V2) which makes this repository obsolete.
+In the new Analytics service, top searches are limited to 1k results.
+As a result, the number of suggestions can not exceed that number unless you are using any of the other suggestion generation strategies.
+
+Algolia will soon provide a newly hosted version of this service along the other Analytics services.
+
+In the meantime, if you have any question regarding this feature, please feel free to reach out to support@algolia.com mentioning that you have read this notice.
+
 # Query suggestions
 
 Using Algolia indices and their analytics, generate a new query suggestion index.
