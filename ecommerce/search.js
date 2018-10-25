@@ -4,7 +4,8 @@
 var search = instantsearch({
   appId: 'latency',
   apiKey: '6be0576ff61c053d5f9a3225e2a90f76',
-  indexName: 'ikea'
+  indexName: 'instant_search',
+  routing: true
 });
 
 search.addWidget(
@@ -46,16 +47,16 @@ var noResultsTemplate =
   '<div class="text-center">No results found matching <strong>{{query}}</strong>.</div>';
 
 var menuTemplate =
-  '<a href="javascript:void(0);" class="facet-item {{#isRefined}}active{{/isRefined}}"><span class="facet-name"><i class="fa fa-angle-right"></i> {{name}}</span class="facet-name"></a>';
+  '<a href="javascript:void(0);" class="facet-item {{#isRefined}}active{{/isRefined}}"><span class="facet-name"><i class="fa fa-angle-right"></i> {{label}}</span class="facet-name"></a>';
 
 var facetTemplateCheckbox =
   '<a href="javascript:void(0);" class="facet-item">' +
-    '<input type="checkbox" class="{{cssClasses.checkbox}}" value="{{name}}" {{#isRefined}}checked{{/isRefined}} />{{name}}' +
+    '<input type="checkbox" class="{{cssClasses.checkbox}}" value="{{label}}" {{#isRefined}}checked{{/isRefined}} />{{label}}' +
     '<span class="facet-count">({{count}})</span>' +
   '</a>';
 
 var facetTemplateColors =
-  '<a href="javascript:void(0);" data-facet-value="{{name}}" class="facet-color {{#isRefined}}checked{{/isRefined}}"></a>';
+  '<a href="javascript:void(0);" data-facet-value="{{label}}" class="facet-color {{#isRefined}}checked{{/isRefined}}"></a>';
 
 search.addWidget(
   instantsearch.widgets.hits({
@@ -92,7 +93,11 @@ search.addWidget(
 search.addWidget(
   instantsearch.widgets.hierarchicalMenu({
     container: '#categories',
-    attributes: ['category', 'sub_category', 'sub_sub_category'],
+    attributes: [
+      'hierarchicalCategories.lvl0',
+      'hierarchicalCategories.lvl1',
+      'hierarchicalCategories.lvl2'
+    ],
     sortBy: ['name:asc'],
     templates: {
       item: menuTemplate
@@ -102,26 +107,27 @@ search.addWidget(
 
 search.addWidget(
   instantsearch.widgets.refinementList({
-    container: '#materials',
-    attributeName: 'materials',
+    container: '#types',
+    attributeName: 'type',
     operator: 'or',
-    limit: 10,
+    limit: 5,
     templates: {
       item: facetTemplateCheckbox,
-      header: '<div class="facet-title">Materials</div class="facet-title">'
+      header: '<div class="facet-title">Type</div class="facet-title">'
     }
   })
 );
 
 search.addWidget(
   instantsearch.widgets.refinementList({
-    container: '#colors',
-    attributeName: 'colors',
+    container: '#brands',
+    attributeName: 'brand',
     operator: 'or',
-    limit: 10,
+    limit: 5,
+    searchForFacetValues: true,
     templates: {
-      item: facetTemplateColors,
-      header: '<div class="facet-title">Colors</div class="facet-title">'
+      item: facetTemplateCheckbox,
+      header: '<div class="facet-title">Brand</div class="facet-title">'
     }
   })
 );
@@ -131,7 +137,7 @@ search.addWidget(
     container: '#rating',
     attributeName: 'rating',
     templates: {
-      header: '<div class="facet-title">Ratings</div class="facet-title">'
+      header: '<div class="facet-title">Rating</div class="facet-title">'
     }
   })
 );
@@ -155,9 +161,9 @@ search.addWidget(
   instantsearch.widgets.sortBySelector({
     container: '#sort-by-selector',
     indices: [
-      {name: 'ikea', label: 'Featured'},
-      {name: 'ikea_price_asc', label: 'Price asc.'},
-      {name: 'ikea_price_desc', label: 'Price desc.'}
+      {name: 'instant_search', label: 'Featured'},
+      {name: 'instant_search_price_asc', label: 'Price asc.'},
+      {name: 'instant_search_price_desc', label: 'Price desc.'}
     ],
     label:'sort by'
   })
@@ -179,7 +185,7 @@ search.addWidget(
 search.start();
 
 var client = algoliasearch('OMDED4ZQES', '24c5f81bb301609f7dced52863634ec6')
-var index = client.initIndex('ikea_popular_searches');
+var index = client.initIndex('instant_search_popular_searches');
 $('#q').autocomplete({
   hint: false,
   appendTo: 'body'
