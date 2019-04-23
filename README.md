@@ -2,6 +2,8 @@
 
 This repository will soon be removed and should not be used to build new projects.
 
+You should probably go to https://www.algolia.com/doc/guides/getting-insights-and-analytics/leveraging-analytics-data/query-suggestions/#query-suggestions---what-is-it
+
 Algolia has introduced a new version of its Analytics service (V2) which makes this repository obsolete.
 In the new Analytics service, top searches are limited to 1k results.
 As a result, the number of suggestions can not exceed that number unless you are using any of the other suggestion generation strategies.
